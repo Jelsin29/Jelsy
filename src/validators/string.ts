@@ -12,7 +12,9 @@ export interface StringValidatorOptions<
 export const string = <const C extends string = string>(
   options?: StringValidatorOptions<C>
 ): Validator<C> => {
-  const minLength = options?.minLength ?? 1
+  const minLength = options?.choices
+    ? (options?.minLength ?? 0)
+    : (options?.minLength ?? 1)
 
   return makeValidator<C>(
     "string",

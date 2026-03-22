@@ -134,4 +134,31 @@ describe("number", () => {
 
     expect(result).toBe(10)
   })
+
+  it("parses a negative integer", () => {
+    const v = number()
+    const result = v._parse("OFFSET", "-5", undefined)
+
+    expect(result).toBe(-5)
+  })
+
+  it("validates negative number within min/max range", () => {
+    const v = number({ min: -10, max: -1 })
+    const result = v._parse("TEMP", "-5", undefined)
+
+    expect(result).toBe(-5)
+  })
+
+  it("rejects negative number below min", () => {
+    const v = number({ min: -10, max: -1 })
+
+    try {
+      v._parse("TEMP", "-20", undefined)
+      expect.unreachable("should have thrown")
+    } catch (err) {
+      const e = err as Record<string, unknown>
+      expect(e["kind"]).toBe("invalid")
+      expect(e["message"]).toBe("Must be at least -10")
+    }
+  })
 })

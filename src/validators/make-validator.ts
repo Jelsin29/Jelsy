@@ -17,6 +17,23 @@ export const makeValidator = <T>(
     ...(options?.docs !== undefined && { docs: options.docs })
   }
 
+  const applyTransform = (key: string, value: T, raw?: string): T => {
+    if (!options?.transform) return value
+    try {
+      return options.transform(value)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      throw {
+        key,
+        kind: "invalid" as const,
+        message,
+        ...(raw !== undefined && { received: raw }),
+        desc: options?.desc,
+        example: options?.example
+      }
+    }
+  }
+
   // @internal — _parse throws plain ValidationError-shaped objects (not Error instances).
   // This is intentional: createEnv catches these and collects them into a report.
   const _parse = (
@@ -26,40 +43,10 @@ export const makeValidator = <T>(
   ): T => {
     if (raw === undefined) {
       if (options?.devDefault !== undefined && nodeEnv !== "production") {
-        const val = options.devDefault
-        if (options?.transform) {
-          try {
-            return options.transform(val)
-          } catch (err) {
-            const message = err instanceof Error ? err.message : String(err)
-            throw {
-              key,
-              kind: "invalid" as const,
-              message,
-              desc: options?.desc,
-              example: options?.example
-            }
-          }
-        }
-        return val
+        return applyTransform(key, options.devDefault)
       }
       if (options?.default !== undefined) {
-        const val = options.default
-        if (options?.transform) {
-          try {
-            return options.transform(val)
-          } catch (err) {
-            const message = err instanceof Error ? err.message : String(err)
-            throw {
-              key,
-              kind: "invalid" as const,
-              message,
-              desc: options?.desc,
-              example: options?.example
-            }
-          }
-        }
-        return val
+        return applyTransform(key, options.default)
       }
       if (options?.optional) {
         return undefined as T
@@ -88,23 +75,7 @@ export const makeValidator = <T>(
       }
     }
 
-    if (options?.transform) {
-      try {
-        parsed = options.transform(parsed)
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err)
-        throw {
-          key,
-          kind: "invalid" as const,
-          message,
-          received: raw,
-          desc: options?.desc,
-          example: options?.example
-        }
-      }
-    }
-
-    return parsed
+    return applyTransform(key, parsed, raw)
   }
 
   return {
