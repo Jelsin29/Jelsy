@@ -45,7 +45,7 @@ describe("number", () => {
     } catch (err) {
       const e = err as Record<string, unknown>
       expect(e["kind"]).toBe("invalid")
-      expect(e["message"]).toBe('"Infinity" is not a finite number')
+      expect(e["message"]).toBe('"Infinity" is not a valid number')
     }
   })
 
@@ -92,6 +92,32 @@ describe("number", () => {
       const e = err as Record<string, unknown>
       expect(e["kind"]).toBe("invalid")
       expect(e["message"]).toBe("Must be at most 100")
+    }
+  })
+
+  it("rejects hex input", () => {
+    const v = number()
+
+    try {
+      v._parse("VAL", "0x1A", undefined)
+      expect.unreachable("should have thrown")
+    } catch (err) {
+      const e = err as Record<string, unknown>
+      expect(e["kind"]).toBe("invalid")
+      expect(e["message"]).toBe('"0x1A" is not a valid number')
+    }
+  })
+
+  it("rejects whitespace-padded input", () => {
+    const v = number()
+
+    try {
+      v._parse("VAL", " 42 ", undefined)
+      expect.unreachable("should have thrown")
+    } catch (err) {
+      const e = err as Record<string, unknown>
+      expect(e["kind"]).toBe("invalid")
+      expect(e["message"]).toBe('" 42 " is not a valid number')
     }
   })
 

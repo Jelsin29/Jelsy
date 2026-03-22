@@ -11,6 +11,9 @@ export const number = (options?: NumberValidatorOptions): Validator<number> => {
   return makeValidator<number>(
     "number",
     (value) => {
+      if (!/^-?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(value)) {
+        throw new Error(`"${value}" is not a valid number`)
+      }
       const num = Number(value)
       if (Number.isNaN(num)) {
         throw new Error(`"${value}" is not a valid number`)

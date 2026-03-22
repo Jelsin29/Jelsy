@@ -5,6 +5,7 @@ export class JelsyError extends Error {
 
   constructor(errors: Record<string, ValidationError>) {
     super("Environment validation failed")
+    Object.setPrototypeOf(this, new.target.prototype)
     this.name = "JelsyError"
     this.errors = errors
   }
@@ -15,6 +16,7 @@ export class JelsyAccessError extends Error {
 
   constructor(key: string) {
     super(`Environment variable "${key}" is not defined in the schema`)
+    Object.setPrototypeOf(this, new.target.prototype)
     this.name = "JelsyAccessError"
     this.key = key
   }

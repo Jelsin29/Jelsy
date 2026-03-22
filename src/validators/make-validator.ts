@@ -25,11 +25,39 @@ export const makeValidator = <T>(
     if (raw === undefined) {
       if (options?.devDefault !== undefined && nodeEnv !== "production") {
         const val = options.devDefault
-        return options?.transform ? options.transform(val) : val
+        if (options?.transform) {
+          try {
+            return options.transform(val)
+          } catch (err) {
+            const message = err instanceof Error ? err.message : String(err)
+            throw {
+              key,
+              kind: "invalid" as const,
+              message,
+              desc: options?.desc,
+              example: options?.example
+            }
+          }
+        }
+        return val
       }
       if (options?.default !== undefined) {
         const val = options.default
-        return options?.transform ? options.transform(val) : val
+        if (options?.transform) {
+          try {
+            return options.transform(val)
+          } catch (err) {
+            const message = err instanceof Error ? err.message : String(err)
+            throw {
+              key,
+              kind: "invalid" as const,
+              message,
+              desc: options?.desc,
+              example: options?.example
+            }
+          }
+        }
+        return val
       }
       if (options?.optional) {
         return undefined as T
@@ -67,7 +95,6 @@ export const makeValidator = <T>(
 
   return {
     _output: undefined as unknown as T,
-    _optional: meta.optional,
     _parse,
     _meta: meta
   }

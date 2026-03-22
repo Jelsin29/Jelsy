@@ -34,6 +34,11 @@ describe("JelsyError", () => {
     expect(error).toBeInstanceOf(Error)
   })
 
+  it("is instanceof JelsyError", () => {
+    const error = new JelsyError(errors)
+    expect(error).toBeInstanceOf(JelsyError)
+  })
+
   it("has a summary message", () => {
     const error = new JelsyError(errors)
     expect(error.message).toBe("Environment validation failed")
@@ -54,6 +59,11 @@ describe("JelsyAccessError", () => {
   it("is instanceof Error", () => {
     const error = new JelsyAccessError("MISSING_VAR")
     expect(error).toBeInstanceOf(Error)
+  })
+
+  it("is instanceof JelsyAccessError", () => {
+    const error = new JelsyAccessError("MISSING_VAR")
+    expect(error).toBeInstanceOf(JelsyAccessError)
   })
 
   it("includes key in message", () => {

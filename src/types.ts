@@ -27,8 +27,6 @@ export interface ValidatorMeta<T> {
 export interface Validator<T> {
   /** Phantom type — never assigned at runtime. Carries the output type. */
   readonly _output: T
-  /** Whether this validator was marked optional. Used at type level AND runtime. */
-  readonly _optional: boolean
   /** @internal — called by createEnv to parse and validate a single variable. */
   _parse: (
     key: string,

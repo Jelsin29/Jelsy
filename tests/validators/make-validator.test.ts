@@ -15,9 +15,8 @@ describe("makeValidator", () => {
     expect(v).toHaveProperty("_parse")
     expect(v).toHaveProperty("_meta")
     expect(v).toHaveProperty("_output")
-    expect(v).toHaveProperty("_optional")
     expect(typeof v._parse).toBe("function")
-    expect(v._optional).toBe(false)
+    expect(v._meta.optional).toBe(false)
   })
 
   it("parses raw value correctly", () => {
@@ -134,6 +133,44 @@ describe("makeValidator", () => {
     const result = v._parse("MY_VAR", undefined, "development")
 
     expect(result).toBe("HELLO")
+  })
+
+  it("throws when transform fails on default value", () => {
+    const v = makeValidator("string", stringParser, {
+      default: "hello",
+      transform: () => {
+        throw new Error("transform boom")
+      }
+    })
+
+    try {
+      v._parse("MY_VAR", undefined, "production")
+      expect.unreachable("should have thrown")
+    } catch (err) {
+      const e = err as Record<string, unknown>
+      expect(e["key"]).toBe("MY_VAR")
+      expect(e["kind"]).toBe("invalid")
+      expect(e["message"]).toBe("transform boom")
+    }
+  })
+
+  it("throws when transform fails on devDefault value", () => {
+    const v = makeValidator("string", stringParser, {
+      devDefault: "hello",
+      transform: () => {
+        throw new Error("dev transform boom")
+      }
+    })
+
+    try {
+      v._parse("MY_VAR", undefined, "development")
+      expect.unreachable("should have thrown")
+    } catch (err) {
+      const e = err as Record<string, unknown>
+      expect(e["key"]).toBe("MY_VAR")
+      expect(e["kind"]).toBe("invalid")
+      expect(e["message"]).toBe("dev transform boom")
+    }
   })
 
   it("populates meta correctly", () => {

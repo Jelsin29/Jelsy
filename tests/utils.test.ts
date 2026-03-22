@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest"
+import { describe, it, expect, afterAll } from "vitest"
 import { isEmpty, truncateValue, isProduction } from "../src/utils.js"
 
 describe("isEmpty", () => {
@@ -49,8 +49,7 @@ describe("isProduction", () => {
     expect(isProduction()).toBe(false)
   })
 
-  // Restore original NODE_ENV after tests
-  it.each([["restore"]])("%s", () => {
+  afterAll(() => {
     if (originalEnv !== undefined) {
       process.env["NODE_ENV"] = originalEnv
     } else {
