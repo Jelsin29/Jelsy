@@ -1,5 +1,5 @@
-// TODO: Implement enums validator
 import type { Validator, ValidatorOptions } from "../types.js"
+import { makeValidator } from "./make-validator.js"
 
 export interface EnumsValidatorOptions<
   V extends string
@@ -8,7 +8,16 @@ export interface EnumsValidatorOptions<
 }
 
 export const enums = <const V extends string>(
-  _options: EnumsValidatorOptions<V>
+  options: EnumsValidatorOptions<V>
 ): Validator<V> => {
-  throw new Error("enums validator not yet implemented")
+  return makeValidator<V>(
+    "enums",
+    (value) => {
+      if (!options.values.includes(value as V)) {
+        throw new Error(`Must be one of: ${options.values.join(", ")}`)
+      }
+      return value as V
+    },
+    options
+  )
 }

@@ -1,8 +1,11 @@
-// TODO: Implement json validator
 import type { Validator, ValidatorOptions } from "../types.js"
+import { makeValidator } from "./make-validator.js"
 
 export const json = <T = unknown>(
-  _options?: ValidatorOptions<T>
-): Validator<T> => {
-  throw new Error("json validator not yet implemented")
-}
+  options?: ValidatorOptions<T>
+): Validator<T> =>
+  makeValidator<T>(
+    "json",
+    (value) => JSON.parse(value) as T,
+    options
+  )
