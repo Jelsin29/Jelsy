@@ -161,4 +161,16 @@ describe("number", () => {
       expect(e["message"]).toBe("Must be at least -10")
     }
   })
+
+  it("rejects negative above max", () => {
+    const v = number({ min: -10, max: -1 })
+    try {
+      v._parse("TEMP", "-0.5", undefined)
+      expect.unreachable("should have thrown")
+    } catch (err) {
+      const e = err as Record<string, unknown>
+      expect(e["kind"]).toBe("invalid")
+      expect(e["message"]).toBe("Must be at most -1")
+    }
+  })
 })

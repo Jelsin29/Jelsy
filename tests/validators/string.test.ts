@@ -2,6 +2,12 @@ import { describe, it, expect } from "vitest"
 import { string } from "../../src/validators/string.js"
 
 describe("string validator", () => {
+  it("choices containing empty string passes", () => {
+    const v = string({ choices: ["", "none"] as const })
+    const result = v._parse("MODE", "", undefined)
+    expect(result).toBe("")
+  })
+
   it("valid non-empty string passes", () => {
     const v = string()
     const result = v._parse("MY_VAR", "hello", undefined)
