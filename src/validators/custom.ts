@@ -11,7 +11,7 @@ export const custom = <T>(
 ): Validator<T> => {
   return makeValidator<T>(
     "custom",
-    (value) => options.parser(value),
+    options.parser,
     options
   )
 }

@@ -66,6 +66,15 @@ describe("regex validator", () => {
     expect(result).toBe("00042")
   })
 
+  it("g-flag regex does not alternate pass/fail across calls", () => {
+    const v = regex({ pattern: /^\d+$/g })
+    const first = v._parse("A", "123", undefined)
+    const second = v._parse("B", "456", undefined)
+
+    expect(first).toBe("123")
+    expect(second).toBe("456")
+  })
+
   it("error message references the pattern", () => {
     const v = regex({ pattern: /^v\d+$/ })
 

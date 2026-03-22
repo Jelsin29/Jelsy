@@ -9,6 +9,7 @@ export const regex = (options: RegexValidatorOptions): Validator<string> => {
   return makeValidator<string>(
     "regex",
     (value) => {
+      options.pattern.lastIndex = 0
       if (!options.pattern.test(value)) {
         throw new Error(`Must match pattern ${options.pattern}`)
       }

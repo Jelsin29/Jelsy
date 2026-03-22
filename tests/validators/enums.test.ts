@@ -43,6 +43,7 @@ describe("enums validator", () => {
     } catch (err) {
       const e = err as Record<string, unknown>
       expect(e["kind"]).toBe("invalid")
+      expect(e["message"]).toBe("No valid values are defined")
     }
   })
 
