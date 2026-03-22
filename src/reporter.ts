@@ -1,7 +1,6 @@
-// TODO: Implement default reporter
 import type { Reporter } from "./types.js"
+import { JelsyError } from "./errors.js"
 
-export const defaultReporter: Reporter = (_report) => {
-  // Stub — will be implemented in Sprint 4
-  throw new Error("defaultReporter not yet implemented")
+export const defaultReporter: Reporter = (report): void => {
+  throw new JelsyError(report.errors)
 }
