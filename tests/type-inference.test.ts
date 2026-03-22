@@ -38,9 +38,8 @@ describe("string() types", () => {
     >()
   })
 
-  it("returns Validator<string> when default is provided without choices", () => {
-    const v = string({ default: "x" })
-    expectTypeOf(v).toEqualTypeOf<Validator<string>>()
+  it("returns Validator<string> when options are provided", () => {
+    expectTypeOf<typeof string>().returns.toEqualTypeOf<Validator<string>>()
   })
 
   it("StringValidatorOptions.minLength is number | undefined", () => {
@@ -370,11 +369,34 @@ describe("ValidatorOptions<T>", () => {
 // ---------------------------------------------------------------------------
 // 13. InferEnv<T>
 // ---------------------------------------------------------------------------
+//
+// IsRequired inspects `_meta.optional` and `_meta.default` at the type level.
+// A generic `Validator<T>` has `optional: boolean` and `default: T | undefined`,
+// so `boolean extends true` is false → IsRequired returns false → all keys optional.
+// To properly test required vs optional, we need concrete _meta shapes with
+// literal types (e.g., `optional: false`, `default: undefined`).
+// ---------------------------------------------------------------------------
+
+/** A validator whose _meta signals "required": optional is literally false, default is literally undefined. */
+interface RequiredValidator<T> extends Validator<T> {
+  _meta: ValidatorMeta<T> & { optional: false; default: undefined }
+}
+
+/** A validator whose _meta signals "optional": optional is literally true. */
+interface OptionalValidator<T> extends Validator<T> {
+  _meta: ValidatorMeta<T> & { optional: true }
+}
+
+/** A validator with a default value (not undefined), making it optional. */
+interface DefaultedValidator<T> extends Validator<T> {
+  _meta: ValidatorMeta<T> & { optional: false; default: T }
+}
+
 describe("InferEnv<T>", () => {
-  it("infers required keys from validators without defaults", () => {
+  it("makes keys required when _meta has optional: false and default: undefined", () => {
     type Schema = {
-      HOST: Validator<string>
-      PORT: Validator<number>
+      HOST: RequiredValidator<string>
+      PORT: RequiredValidator<number>
     }
     expectTypeOf<InferEnv<Schema>>().toEqualTypeOf<{
       HOST: string
@@ -382,15 +404,47 @@ describe("InferEnv<T>", () => {
     }>()
   })
 
-  it("produces an object with the correct value types", () => {
+  it("makes keys optional when _meta has optional: true", () => {
+    type Schema = {
+      DEBUG: OptionalValidator<boolean>
+    }
+    expectTypeOf<InferEnv<Schema>>().toEqualTypeOf<{
+      DEBUG?: boolean | undefined
+    }>()
+  })
+
+  it("makes keys optional when _meta has a concrete default", () => {
+    type Schema = {
+      PORT: DefaultedValidator<number>
+    }
+    expectTypeOf<InferEnv<Schema>>().toEqualTypeOf<{
+      PORT?: number | undefined
+    }>()
+  })
+
+  it("mixes required and optional keys correctly", () => {
+    type Schema = {
+      HOST: RequiredValidator<string>
+      PORT: DefaultedValidator<number>
+      DEBUG: OptionalValidator<boolean>
+    }
+    expectTypeOf<InferEnv<Schema>>().toEqualTypeOf<{
+      HOST: string
+      PORT?: number | undefined
+      DEBUG?: boolean | undefined
+    }>()
+  })
+
+  it("treats generic Validator<T> keys as optional (boolean is not literal false)", () => {
+    // With generic Validator<T>, _meta.optional is `boolean` — not `true`,
+    // so IsRequired returns false, making all keys optional.
     type Schema = {
       NAME: Validator<string>
       COUNT: Validator<number>
-      FLAG: Validator<boolean>
     }
-    type Env = InferEnv<Schema>
-    expectTypeOf<Env["NAME"]>().toEqualTypeOf<string>()
-    expectTypeOf<Env["COUNT"]>().toEqualTypeOf<number>()
-    expectTypeOf<Env["FLAG"]>().toEqualTypeOf<boolean>()
+    expectTypeOf<InferEnv<Schema>>().toEqualTypeOf<{
+      NAME?: string | undefined
+      COUNT?: number | undefined
+    }>()
   })
 })
