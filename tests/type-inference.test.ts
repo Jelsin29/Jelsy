@@ -1,8 +1,14 @@
 import { describe, it } from "vitest"
 import { expectTypeOf } from "expect-type"
 
-import type { Validator, ValidatorMeta, ValidatorOptions } from "../src/types.js"
+import type {
+  Validator,
+  ValidatorMeta,
+  ValidatorOptions,
+  InferEnv,
+} from "../src/types.js"
 import type { StringValidatorOptions } from "../src/validators/string.js"
+import type { NumberValidatorOptions } from "../src/validators/number.js"
 import type { UrlValidatorOptions } from "../src/validators/url.js"
 import type { EnumsValidatorOptions } from "../src/validators/enums.js"
 import type { RegexValidatorOptions } from "../src/validators/regex.js"
@@ -27,14 +33,26 @@ describe("string() types", () => {
   })
 
   it("narrows to union when choices are provided as const", () => {
-    // string() is implemented, safe to call at runtime
-    const v = string({ choices: ["a", "b"] as const })
-    expectTypeOf(v).toEqualTypeOf<Validator<"a" | "b">>()
+    expectTypeOf<typeof string<"a" | "b">>().returns.toEqualTypeOf<
+      Validator<"a" | "b">
+    >()
   })
 
   it("returns Validator<string> when default is provided without choices", () => {
     const v = string({ default: "x" })
     expectTypeOf(v).toEqualTypeOf<Validator<string>>()
+  })
+
+  it("StringValidatorOptions.minLength is number | undefined", () => {
+    expectTypeOf<StringValidatorOptions["minLength"]>().toEqualTypeOf<
+      number | undefined
+    >()
+  })
+
+  it("StringValidatorOptions.maxLength is number | undefined", () => {
+    expectTypeOf<StringValidatorOptions["maxLength"]>().toEqualTypeOf<
+      number | undefined
+    >()
   })
 })
 
@@ -44,6 +62,30 @@ describe("string() types", () => {
 describe("number() types", () => {
   it("returns Validator<number>", () => {
     expectTypeOf(number).returns.toEqualTypeOf<Validator<number>>()
+  })
+
+  it("accepts NumberValidatorOptions | undefined as parameter", () => {
+    expectTypeOf(number).parameter(0).toEqualTypeOf<
+      NumberValidatorOptions | undefined
+    >()
+  })
+
+  it("NumberValidatorOptions.min is number | undefined", () => {
+    expectTypeOf<NumberValidatorOptions["min"]>().toEqualTypeOf<
+      number | undefined
+    >()
+  })
+
+  it("NumberValidatorOptions.max is number | undefined", () => {
+    expectTypeOf<NumberValidatorOptions["max"]>().toEqualTypeOf<
+      number | undefined
+    >()
+  })
+
+  it("NumberValidatorOptions.integer is boolean | undefined", () => {
+    expectTypeOf<NumberValidatorOptions["integer"]>().toEqualTypeOf<
+      boolean | undefined
+    >()
   })
 })
 
@@ -109,6 +151,12 @@ describe("email() types", () => {
   it("returns Validator<string> from signature", () => {
     expectTypeOf(email).returns.toEqualTypeOf<Validator<string>>()
   })
+
+  it("accepts ValidatorOptions<string> | undefined as parameter", () => {
+    expectTypeOf(email).parameter(0).toEqualTypeOf<
+      ValidatorOptions<string> | undefined
+    >()
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -151,6 +199,12 @@ describe("enums() types", () => {
   it("EnumsValidatorOptions extends ValidatorOptions", () => {
     expectTypeOf<EnumsValidatorOptions<"x">>().toMatchTypeOf<
       ValidatorOptions<"x">
+    >()
+  })
+
+  it("parameter requires EnumsValidatorOptions with correct type", () => {
+    expectTypeOf<typeof enums<"dev" | "prod">>().parameter(0).toEqualTypeOf<
+      EnumsValidatorOptions<"dev" | "prod">
     >()
   })
 })
@@ -310,5 +364,33 @@ describe("ValidatorOptions<T>", () => {
     expectTypeOf<ValidatorOptions<unknown>["docs"]>().toEqualTypeOf<
       string | undefined
     >()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// 13. InferEnv<T>
+// ---------------------------------------------------------------------------
+describe("InferEnv<T>", () => {
+  it("infers required keys from validators without defaults", () => {
+    type Schema = {
+      HOST: Validator<string>
+      PORT: Validator<number>
+    }
+    expectTypeOf<InferEnv<Schema>>().toEqualTypeOf<{
+      HOST: string
+      PORT: number
+    }>()
+  })
+
+  it("produces an object with the correct value types", () => {
+    type Schema = {
+      NAME: Validator<string>
+      COUNT: Validator<number>
+      FLAG: Validator<boolean>
+    }
+    type Env = InferEnv<Schema>
+    expectTypeOf<Env["NAME"]>().toEqualTypeOf<string>()
+    expectTypeOf<Env["COUNT"]>().toEqualTypeOf<number>()
+    expectTypeOf<Env["FLAG"]>().toEqualTypeOf<boolean>()
   })
 })
