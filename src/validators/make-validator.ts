@@ -1,11 +1,74 @@
-// TODO: Implement makeValidator factory
-import type { Validator, ValidatorOptions } from "../types.js"
+import type { Validator, ValidatorMeta, ValidatorOptions } from "../types.js"
 
 export const makeValidator = <T>(
-  _type: string,
-  _parseFn: (value: string) => T,
-  _options?: ValidatorOptions<T>
+  type: string,
+  parseFn: (value: string) => T,
+  options?: ValidatorOptions<T>
 ): Validator<T> => {
-  // Stub — will be implemented in foundation/make-validator
-  throw new Error("makeValidator not yet implemented")
+  const meta: ValidatorMeta<T> = {
+    type,
+    optional: options?.optional ?? false,
+    ...(options?.default !== undefined && { default: options.default }),
+    ...(options?.devDefault !== undefined && {
+      devDefault: options.devDefault
+    }),
+    ...(options?.desc !== undefined && { desc: options.desc }),
+    ...(options?.example !== undefined && { example: options.example }),
+    ...(options?.docs !== undefined && { docs: options.docs })
+  }
+
+  const _parse = (
+    key: string,
+    raw: string | undefined,
+    nodeEnv: string | undefined
+  ): T => {
+    if (raw === undefined) {
+      if (options?.devDefault !== undefined && nodeEnv !== "production") {
+        const val = options.devDefault
+        return options?.transform ? options.transform(val) : val
+      }
+      if (options?.default !== undefined) {
+        const val = options.default
+        return options?.transform ? options.transform(val) : val
+      }
+      if (options?.optional) {
+        return undefined as T
+      }
+      throw {
+        key,
+        kind: "missing" as const,
+        message: "Required — missing and no default",
+        desc: options?.desc,
+        example: options?.example
+      }
+    }
+
+    let parsed: T
+    try {
+      parsed = parseFn(raw)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      throw {
+        key,
+        kind: "invalid" as const,
+        message,
+        received: raw,
+        desc: options?.desc,
+        example: options?.example
+      }
+    }
+
+    if (options?.transform) {
+      parsed = options.transform(parsed)
+    }
+
+    return parsed
+  }
+
+  return {
+    _output: undefined as unknown as T,
+    _optional: meta.optional,
+    _parse,
+    _meta: meta
+  }
 }
