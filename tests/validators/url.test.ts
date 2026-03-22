@@ -104,6 +104,12 @@ describe("url validator", () => {
     )
   })
 
+  it("protocols without trailing colon throw at construction time", () => {
+    expect(() => url({ protocols: ["redis"] })).toThrow(
+      'Protocols must end with ":"'
+    )
+  })
+
   it("rejects javascript: protocol", () => {
     const v = url()
 

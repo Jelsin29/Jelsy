@@ -107,6 +107,12 @@ type OptionalKeys<S extends EnvSchema> = {
  *
  * Uses `Simplify` to flatten the intersection into a single object type
  * so IDE tooltips show the actual shape.
+ *
+ * **Edge case**: Using generic `Validator<T>` directly (e.g., `Validator<string>`)
+ * instead of concrete validators from `string()`, `number()`, etc. will make all
+ * keys optional. This happens because `_meta.optional` resolves to `boolean`
+ * (not literal `false`), so `IsRequired` cannot narrow it. Use `typeof` on your
+ * validator calls or the concrete validator functions to get correct inference.
  */
 export type InferEnv<TSchema extends EnvSchema> = Simplify<
   { [K in RequiredKeys<TSchema>]: TSchema[K]["_output"] } & {
