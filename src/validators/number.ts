@@ -1,5 +1,5 @@
-// TODO: Implement number validator
 import type { Validator, ValidatorOptions } from "../types.js"
+import { makeValidator } from "./make-validator.js"
 
 export interface NumberValidatorOptions extends ValidatorOptions<number> {
   min?: number
@@ -7,9 +7,28 @@ export interface NumberValidatorOptions extends ValidatorOptions<number> {
   integer?: boolean
 }
 
-export const number = (
-  _options?: NumberValidatorOptions
-): Validator<number> => {
-  // Stub — will be implemented in foundation/number-validator
-  throw new Error("number validator not yet implemented")
+export const number = (options?: NumberValidatorOptions): Validator<number> => {
+  return makeValidator<number>(
+    "number",
+    (value) => {
+      const num = Number(value)
+      if (Number.isNaN(num)) {
+        throw new Error(`"${value}" is not a valid number`)
+      }
+      if (!Number.isFinite(num)) {
+        throw new Error(`"${value}" is not a finite number`)
+      }
+      if (options?.integer && !Number.isInteger(num)) {
+        throw new Error(`"${value}" is not an integer`)
+      }
+      if (options?.min !== undefined && num < options.min) {
+        throw new Error(`Must be at least ${options.min}`)
+      }
+      if (options?.max !== undefined && num > options.max) {
+        throw new Error(`Must be at most ${options.max}`)
+      }
+      return num
+    },
+    options
+  )
 }
