@@ -1,9 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { createEnv, string, number, port, boolean } from "../src/index.js"
-import type { EnvExplainEntry } from "../src/types.js"
-
-const getExplain = (env: unknown): EnvExplainEntry[] =>
-  (env as { explain: () => EnvExplainEntry[] }).explain()
+import { getExplain } from "./helpers.js"
 
 describe("createEnv — explain()", () => {
   // SPEC-15: mixed sources provenance (env + default + devDefault)
