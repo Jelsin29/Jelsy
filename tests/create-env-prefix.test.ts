@@ -1,10 +1,7 @@
 import { describe, it, expect } from "vitest"
 import { createEnv, string, number, port } from "../src/index.js"
 import { JelsyError } from "../src/errors.js"
-import type { EnvExplainEntry } from "../src/types.js"
-
-const getExplain = (env: unknown): EnvExplainEntry[] =>
-  (env as { explain: () => EnvExplainEntry[] }).explain()
+import { getExplain } from "./helpers.js"
 
 describe("createEnv — prefix option", () => {
   // SPEC-20: reads prefixed key (MYAPP_PORT -> PORT), returns unprefixed result
@@ -122,7 +119,7 @@ describe("createEnv — prefix option", () => {
       { env: { NODE_ENV: "development", APP_SECRET: "prod-secret" }, prefix: "APP_" }
     )
 
-    // NODE_ENV is read WITHOUT prefix, so devDefault is NOT used (env value wins)
+    // APP_SECRET is found via prefix → env value wins; devDefault is never considered
     expect(env.SECRET).toBe("prod-secret")
   })
 })

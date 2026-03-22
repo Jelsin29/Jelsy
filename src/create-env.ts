@@ -8,13 +8,12 @@ import type {
 } from "./types.js"
 import { JelsyError } from "./errors.js"
 
-interface ProvenanceEntry {
-  key: string
-  value: unknown
-  source: "env" | "default" | "devDefault"
-  type: string
-  desc?: string
-}
+const isValidationError = (err: unknown): err is ValidationError =>
+  typeof err === "object" &&
+  err !== null &&
+  "key" in err &&
+  "kind" in err &&
+  "message" in err
 
 export const createEnv = <TSchema extends EnvSchema>(
   schema: TSchema,
@@ -27,11 +26,15 @@ export const createEnv = <TSchema extends EnvSchema>(
     string | undefined
   >
 
-  // 2. Resolve nodeEnv (from env source, NOT process.env directly, WITHOUT prefix)
-  const nodeEnv = envSource["NODE_ENV"] || undefined
-
-  // 3. Build resolveRaw helper
+  // 2. Compute emptyStringAsUndefined early — needed for both nodeEnv and resolveRaw
   const emptyAsUndefined = options?.emptyStringAsUndefined ?? true
+
+  // 3. Resolve nodeEnv (from env source, NOT process.env directly, WITHOUT prefix).
+  // Uses ?? (not ||) so that explicit empty string is preserved unless emptyAsUndefined is on.
+  const rawNodeEnv = envSource["NODE_ENV"]
+  const nodeEnv = (emptyAsUndefined && rawNodeEnv === "") ? undefined : rawNodeEnv ?? undefined
+
+  // 4. Build resolveRaw helper (prefix + emptyStringAsUndefined)
 
   const resolveRaw = (key: string): string | undefined => {
     const envKey = options?.prefix ? options.prefix + key : key
@@ -40,17 +43,17 @@ export const createEnv = <TSchema extends EnvSchema>(
     return raw
   }
 
-  // 4. Iterate schema keys — collect results and errors
+  // 5. Iterate schema keys — collect results and errors
   const result = {} as Record<string, unknown>
   const errors: Record<string, ValidationError> = {}
-  const provenance: ProvenanceEntry[] = []
+  const provenance: EnvExplainEntry[] = []
 
   const inferProvenance = (
     key: string,
     raw: string | undefined,
     parsed: unknown,
     meta: { type: string; default?: unknown; devDefault?: unknown; desc?: string }
-  ): ProvenanceEntry => {
+  ): EnvExplainEntry => {
     let source: "env" | "default" | "devDefault"
 
     if (raw !== undefined) {
@@ -79,14 +82,21 @@ export const createEnv = <TSchema extends EnvSchema>(
       result[key] = parsed
       provenance.push(inferProvenance(key, raw, parsed, validator._meta))
     } catch (err) {
-      errors[key] = err as ValidationError
+      if (isValidationError(err)) {
+        errors[key] = err
+      } else {
+        throw err
+      }
     }
   })
 
-  // 5. If errors exist, report and throw
+  // 6. If errors exist, report and throw
   if (Object.keys(errors).length > 0) {
     const report: ValidationReport = { errors, env: envSource }
 
+    // Custom reporter is for display/logging only.
+    // If reporter throws, that exception propagates (JelsyError is NOT thrown).
+    // If reporter returns normally, JelsyError is thrown below as a safety net.
     if (options?.reporter) {
       options.reporter(report)
     }
