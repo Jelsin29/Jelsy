@@ -97,6 +97,13 @@ describe("email validator", () => {
     }
   })
 
+  it("accepts double-dot domain (intentional tradeoff)", () => {
+    const v = email()
+    const result = v._parse("EMAIL", "a@b..c", undefined)
+
+    expect(result).toBe("a@b..c")
+  })
+
   it("accepts single-char TLD", () => {
     const v = email()
     const result = v._parse("EMAIL", "a@b.c", undefined)

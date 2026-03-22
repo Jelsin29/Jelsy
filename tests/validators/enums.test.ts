@@ -34,17 +34,10 @@ describe("enums validator", () => {
     }
   })
 
-  it("empty values array rejects any value", () => {
-    const v = enums({ values: [] as const })
-
-    try {
-      v._parse("MY_VAR", "anything", undefined)
-      expect.unreachable("should have thrown")
-    } catch (err) {
-      const e = err as Record<string, unknown>
-      expect(e["kind"]).toBe("invalid")
-      expect(e["message"]).toBe("No valid values are defined")
-    }
+  it("empty values array throws at construction time", () => {
+    expect(() => enums({ values: [] as const })).toThrow(
+      "No valid values are defined"
+    )
   })
 
   it("default value used when raw is undefined", () => {

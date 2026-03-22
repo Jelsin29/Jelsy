@@ -98,6 +98,12 @@ describe("url validator", () => {
     expect(result).toBe("https://example.com:8080/path?q=1")
   })
 
+  it("empty protocols array throws at construction time", () => {
+    expect(() => url({ protocols: [] })).toThrow(
+      "protocols array must not be empty"
+    )
+  })
+
   it("rejects javascript: protocol", () => {
     const v = url()
 
