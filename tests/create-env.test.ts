@@ -278,4 +278,16 @@ describe("createEnv", () => {
     expect(spread).toEqual({ HOST: "localhost" })
     expect("explain" in spread).toBe(false)
   })
+
+  // SPEC-15: prefix option — schema key reads from prefixed env var
+  it("reads prefixed env var when prefix option is set", () => {
+    const env = createEnv(
+      {
+        PORT: port()
+      },
+      { env: { MYAPP_PORT: "4000" }, prefix: "MYAPP_" }
+    )
+
+    expect(env.PORT).toBe(4000)
+  })
 })
