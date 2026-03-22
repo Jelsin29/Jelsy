@@ -8,6 +8,10 @@ export interface UrlValidatorOptions extends ValidatorOptions<string> {
 export const url = (options?: UrlValidatorOptions): Validator<string> => {
   const protocols = options?.protocols ?? ["http:", "https:"]
 
+  if (options?.protocols && options.protocols.length === 0) {
+    throw new Error("protocols array must not be empty")
+  }
+
   return makeValidator<string>(
     "url",
     (value) => {

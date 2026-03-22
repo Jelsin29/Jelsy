@@ -58,7 +58,7 @@ describe("port", () => {
     } catch (err) {
       const e = err as Record<string, unknown>
       expect(e["kind"]).toBe("invalid")
-      expect(e["message"]).toContain("not an integer")
+      expect(e["message"]).toContain("not a valid number")
     }
   })
 
@@ -98,5 +98,41 @@ describe("port", () => {
     const result = v._parse("PORT", "8080", undefined)
 
     expect(result).toBe(8081)
+  })
+
+  it("rejects scientific notation", () => {
+    const v = port()
+
+    try {
+      v._parse("PORT", "3e3", undefined)
+      expect.unreachable("should have thrown")
+    } catch (err) {
+      const e = err as Record<string, unknown>
+      expect(e["kind"]).toBe("invalid")
+    }
+  })
+
+  it("rejects hex notation", () => {
+    const v = port()
+
+    try {
+      v._parse("PORT", "0x1F90", undefined)
+      expect.unreachable("should have thrown")
+    } catch (err) {
+      const e = err as Record<string, unknown>
+      expect(e["kind"]).toBe("invalid")
+    }
+  })
+
+  it("rejects whitespace-padded input", () => {
+    const v = port()
+
+    try {
+      v._parse("PORT", "  3000  ", undefined)
+      expect.unreachable("should have thrown")
+    } catch (err) {
+      const e = err as Record<string, unknown>
+      expect(e["kind"]).toBe("invalid")
+    }
   })
 })

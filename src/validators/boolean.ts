@@ -3,12 +3,12 @@ import { makeValidator } from "./make-validator.js"
 
 const BOOLEAN_MAP = new Map<string, boolean>([
   ["true", true],
-  ["1", true],
-  ["yes", true],
-  ["on", true],
   ["false", false],
+  ["1", true],
   ["0", false],
+  ["yes", true],
   ["no", false],
+  ["on", true],
   ["off", false]
 ])
 

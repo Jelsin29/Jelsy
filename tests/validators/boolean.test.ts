@@ -56,9 +56,9 @@ describe("boolean validator", () => {
     } catch (err) {
       const e = err as Record<string, unknown>
       expect(e["kind"]).toBe("invalid")
-      expect(e["message"]).toContain("Must be one of:")
-      expect(e["message"]).toContain("true")
-      expect(e["message"]).toContain("false")
+      expect(e["message"]).toBe(
+        "Must be one of: true, false, 1, 0, yes, no, on, off"
+      )
     }
   })
 

@@ -97,4 +97,16 @@ describe("url validator", () => {
 
     expect(result).toBe("https://example.com:8080/path?q=1")
   })
+
+  it("rejects javascript: protocol", () => {
+    const v = url()
+
+    try {
+      v._parse("API_URL", "javascript:alert(1)", undefined)
+      expect.unreachable("should have thrown")
+    } catch (err) {
+      const e = err as Record<string, unknown>
+      expect(e["kind"]).toBe("invalid")
+    }
+  })
 })

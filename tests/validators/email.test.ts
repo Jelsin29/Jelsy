@@ -96,4 +96,11 @@ describe("email validator", () => {
       expect(e["kind"]).toBe("invalid")
     }
   })
+
+  it("accepts single-char TLD", () => {
+    const v = email()
+    const result = v._parse("EMAIL", "a@b.c", undefined)
+
+    expect(result).toBe("a@b.c")
+  })
 })

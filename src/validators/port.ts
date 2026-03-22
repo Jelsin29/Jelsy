@@ -5,13 +5,10 @@ export const port = (options?: ValidatorOptions<number>): Validator<number> => {
   return makeValidator<number>(
     "port",
     (value) => {
-      const num = Number(value)
-      if (Number.isNaN(num)) {
+      if (!/^\d+$/.test(value)) {
         throw new Error(`"${value}" is not a valid number`)
       }
-      if (!Number.isInteger(num)) {
-        throw new Error(`"${value}" is not an integer`)
-      }
+      const num = Number(value)
       if (num < 1) {
         throw new Error("Must be at least 1")
       }

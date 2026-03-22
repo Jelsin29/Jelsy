@@ -1,6 +1,9 @@
 import type { Validator, ValidatorOptions } from "../types.js"
 import { makeValidator } from "./make-validator.js"
 
+// Intentionally practical regex — not RFC 5322 compliant.
+// May accept edge cases like "a@b..c". This is a deliberate tradeoff
+// for simplicity; do not "fix" without updating tests and docs.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export const email = (
