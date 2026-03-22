@@ -1,0 +1,28 @@
+{
+	"name": "jelsy",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "The modern, type-safe environment variable validator",
+	"main": "dist/index.js",
+	"scripts": {
+		"lint": "eslint . && prettier --check .",
+		"lint:fix": "eslint --fix --quiet . ; prettier --list-different --write .",
+		"format": "prettier --write .",
+		"typecheck": "tsc --noEmit",
+		"build": "tsc",
+		"test": "echo \"No tests configured yet\""
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@types/node": "^25.5.0",
+		"eslint": "^10.1.0",
+		"eslint-config-prettier": "^10.1.8",
+		"globals": "^17.4.0",
+		"prettier": "^3.8.1",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.57.1"
+	}
+}
