@@ -1,4 +1,3 @@
-// TODO: Implement error classes
 import type { ValidationError } from "./types.js"
 
 export class JelsyError extends Error {
