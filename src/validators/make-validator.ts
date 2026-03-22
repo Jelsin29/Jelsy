@@ -17,6 +17,8 @@ export const makeValidator = <T>(
     ...(options?.docs !== undefined && { docs: options.docs })
   }
 
+  // @internal — _parse throws plain ValidationError-shaped objects (not Error instances).
+  // This is intentional: createEnv catches these and collects them into a report.
   const _parse = (
     key: string,
     raw: string | undefined,
@@ -87,7 +89,19 @@ export const makeValidator = <T>(
     }
 
     if (options?.transform) {
-      parsed = options.transform(parsed)
+      try {
+        parsed = options.transform(parsed)
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err)
+        throw {
+          key,
+          kind: "invalid" as const,
+          message,
+          received: raw,
+          desc: options?.desc,
+          example: options?.example
+        }
+      }
     }
 
     return parsed
