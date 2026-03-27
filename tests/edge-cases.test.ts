@@ -70,9 +70,9 @@ describe("all values from env", () => {
 })
 
 // ---------------------------------------------------------------------------
-// Edge case: browser environment (no process global)
+// Edge case: explicit env source (browser-like usage pattern)
 // ---------------------------------------------------------------------------
-describe("browser environment (no process)", () => {
+describe("explicit env source (browser-like usage)", () => {
   it("works with explicit env option when process is not available", () => {
     // Simulate browser: pass env explicitly
     const env = createEnv(

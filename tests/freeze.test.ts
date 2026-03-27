@@ -63,9 +63,9 @@ describe("Object.freeze behavior", () => {
     expect(desc!.enumerable).toBe(true)
   })
 
-  it("is a plain object — not a Proxy", () => {
+  it("has expected prototype chain (plain Object)", () => {
     const env = makeEnv()
-    // A Proxy cannot be detected directly, but we can verify:
+    // Verify the object is a plain Object with standard prototype chain:
     // 1. toString shows [object Object], not a Proxy wrapper
     expect(Object.prototype.toString.call(env)).toBe("[object Object]")
     // 2. The constructor is Object
