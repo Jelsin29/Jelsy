@@ -21,10 +21,7 @@ export const createEnv = <TSchema extends EnvSchema>(
 ): Readonly<InferEnv<TSchema>> => {
   // 1. Resolve env source
   const envSource = (options?.env ??
-    (typeof process !== "undefined" ? process.env : {})) as Record<
-    string,
-    string | undefined
-  >
+    (typeof process !== "undefined" ? process.env : {}))
 
   // 2. Compute emptyStringAsUndefined early — needed for both nodeEnv and resolveRaw
   const emptyAsUndefined = options?.emptyStringAsUndefined ?? true
@@ -74,7 +71,8 @@ export const createEnv = <TSchema extends EnvSchema>(
   }
 
   Object.keys(schema).forEach((key) => {
-    const validator = schema[key]!
+    const validator = schema[key]
+    if (!validator) return
     const raw = resolveRaw(key)
 
     try {

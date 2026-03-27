@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { createEnv, string, number, port, boolean } from "../src/index.js"
+import { createEnv, string, port, boolean } from "../src/index.js"
 
 // ---------------------------------------------------------------------------
 // Object.freeze behavior — proving no Proxy, plain frozen object
@@ -37,7 +37,7 @@ describe("Object.freeze behavior", () => {
   it("deleting property throws in strict mode", () => {
     const env = makeEnv()
     expect(() => {
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+       
       delete (env as Record<string, unknown>)["HOST"]
     }).toThrow(TypeError)
   })
@@ -56,8 +56,11 @@ describe("Object.freeze behavior", () => {
     const env = makeEnv()
     const desc = Object.getOwnPropertyDescriptor(env, "HOST")
     expect(desc).toBeDefined()
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(desc!.writable).toBe(false)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(desc!.configurable).toBe(false)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(desc!.enumerable).toBe(true)
   })
 

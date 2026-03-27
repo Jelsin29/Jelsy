@@ -36,6 +36,7 @@ describe("custom validator", () => {
   it("parser throws non-Error string — still produces invalid kind", () => {
     const v = custom({
       parser: () => {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
         throw "string error"
       }
     })
@@ -66,7 +67,7 @@ describe("custom validator", () => {
   it("complex parser — parses duration string to seconds", () => {
     const v = custom({
       parser: (v) => {
-        const m = v.match(/^(\d+)(s|m|h)$/)
+        const m = /^(\d+)(s|m|h)$/.exec(v)
         if (!m) throw new Error("Invalid duration")
         return (
           parseInt(m[1]) *
@@ -82,7 +83,7 @@ describe("custom validator", () => {
   it("complex parser failure — invalid duration throws", () => {
     const v = custom({
       parser: (v) => {
-        const m = v.match(/^(\d+)(s|m|h)$/)
+        const m = /^(\d+)(s|m|h)$/.exec(v)
         if (!m) throw new Error("Invalid duration")
         return (
           parseInt(m[1]) *

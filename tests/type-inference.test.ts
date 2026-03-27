@@ -20,9 +20,9 @@ import { boolean } from "../src/validators/boolean.js"
 import { url } from "../src/validators/url.js"
 import { email } from "../src/validators/email.js"
 import { json } from "../src/validators/json.js"
-import { enums } from "../src/validators/enums.js"
+import type { enums } from "../src/validators/enums.js"
 import { regex } from "../src/validators/regex.js"
-import { custom } from "../src/validators/custom.js"
+import type { custom } from "../src/validators/custom.js"
 
 // ---------------------------------------------------------------------------
 // 1. string()
@@ -133,7 +133,7 @@ describe("url() types", () => {
   })
 
   it("UrlValidatorOptions extends ValidatorOptions<string>", () => {
-    expectTypeOf<UrlValidatorOptions>().toMatchTypeOf<ValidatorOptions<string>>()
+    expectTypeOf<UrlValidatorOptions>().toExtend<ValidatorOptions<string>>()
   })
 
   it("UrlValidatorOptions has protocols as optional string[]", () => {
@@ -196,7 +196,7 @@ describe("enums() types", () => {
   })
 
   it("EnumsValidatorOptions extends ValidatorOptions", () => {
-    expectTypeOf<EnumsValidatorOptions<"x">>().toMatchTypeOf<
+    expectTypeOf<EnumsValidatorOptions<"x">>().toExtend<
       ValidatorOptions<"x">
     >()
   })
@@ -221,7 +221,7 @@ describe("regex() types", () => {
   })
 
   it("RegexValidatorOptions extends ValidatorOptions<string>", () => {
-    expectTypeOf<RegexValidatorOptions>().toMatchTypeOf<
+    expectTypeOf<RegexValidatorOptions>().toExtend<
       ValidatorOptions<string>
     >()
   })
@@ -394,6 +394,7 @@ interface DefaultedValidator<T> extends Validator<T> {
 
 describe("InferEnv<T>", () => {
   it("makes keys required when _meta has optional: false and default: undefined", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     type Schema = {
       HOST: RequiredValidator<string>
       PORT: RequiredValidator<number>
@@ -405,6 +406,7 @@ describe("InferEnv<T>", () => {
   })
 
   it("makes keys optional when _meta has optional: true", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     type Schema = {
       DEBUG: OptionalValidator<boolean>
     }
@@ -414,6 +416,7 @@ describe("InferEnv<T>", () => {
   })
 
   it("makes keys optional when _meta has a concrete default", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     type Schema = {
       PORT: DefaultedValidator<number>
     }
@@ -423,6 +426,7 @@ describe("InferEnv<T>", () => {
   })
 
   it("mixes required and optional keys correctly", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     type Schema = {
       HOST: RequiredValidator<string>
       PORT: DefaultedValidator<number>
@@ -438,6 +442,7 @@ describe("InferEnv<T>", () => {
   it("treats generic Validator<T> keys as optional (boolean is not literal false)", () => {
     // With generic Validator<T>, _meta.optional is `boolean` — not `true`,
     // so IsRequired returns false, making all keys optional.
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     type Schema = {
       NAME: Validator<string>
       COUNT: Validator<number>

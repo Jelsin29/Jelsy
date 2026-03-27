@@ -6,7 +6,7 @@ export interface UrlValidatorOptions extends ValidatorOptions<string> {
 }
 
 export const url = (options?: UrlValidatorOptions): Validator<string> => {
-  if (options?.protocols && options.protocols.length === 0) {
+  if (options?.protocols?.length === 0) {
     throw new Error("protocols array must not be empty")
   }
 

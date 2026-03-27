@@ -130,9 +130,13 @@ describe("multiple errors collected", () => {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
       expect(Object.keys(jelsyErr.errors)).toHaveLength(4)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["A"]!.kind).toBe("missing")
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["B"]!.kind).toBe("missing")
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["C"]!.kind).toBe("missing")
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["D"]!.kind).toBe("missing")
     }
   })

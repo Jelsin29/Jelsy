@@ -45,6 +45,7 @@ describe("createEnv — prefix option", () => {
     } catch (err) {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["PORT"]!.kind).toBe("missing")
     }
   })
@@ -77,8 +78,11 @@ describe("createEnv — prefix option", () => {
 
     const entries = getExplain(env)
     expect(entries).toHaveLength(1)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.key).toBe("PORT")
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.source).toBe("env")
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.value).toBe(4000)
   })
 

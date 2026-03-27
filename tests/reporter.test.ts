@@ -217,8 +217,9 @@ describe("defaultReporter", () => {
       HOST: { kind: "missing", message: "Missing required" }
     })
 
-    expect(() => defaultReporter(report)).toThrow("process.exit called")
+    expect(() => { defaultReporter(report); }).toThrow("process.exit called")
     expect(stderrSpy).toHaveBeenCalledOnce()
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const output = stderrSpy.mock.calls[0]![0] as string
     expect(output).toContain("jelsy: Invalid Environment")
     expect(output).toContain("HOST")
@@ -241,6 +242,7 @@ describe("defaultReporter", () => {
       // expected
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const stderrOutput = stderrSpy.mock.calls[0]![0] as string
     const expectedTable = formatReportTable(report)
     expect(stderrOutput).toBe(expectedTable + "\n")

@@ -25,10 +25,10 @@ export const number = (options?: NumberValidatorOptions): Validator<number> => {
         throw new Error(`"${value}" is not an integer`)
       }
       if (options?.min !== undefined && num < options.min) {
-        throw new Error(`Must be at least ${options.min}`)
+        throw new Error(`Must be at least ${String(options.min)}`)
       }
       if (options?.max !== undefined && num > options.max) {
-        throw new Error(`Must be at most ${options.max}`)
+        throw new Error(`Must be at most ${String(options.max)}`)
       }
       return num
     },

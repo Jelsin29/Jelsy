@@ -14,6 +14,7 @@ describe("createEnv — emptyStringAsUndefined", () => {
     } catch (err) {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["HOST"]!.kind).toBe("missing")
     }
   })
@@ -30,6 +31,7 @@ describe("createEnv — emptyStringAsUndefined", () => {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
       // The error is "invalid" (not "missing") because the empty string IS passed through
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["HOST"]!.kind).toBe("invalid")
     }
   })
@@ -65,6 +67,7 @@ describe("createEnv — emptyStringAsUndefined", () => {
     } catch (err) {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["HOST"]!.kind).toBe("missing")
     }
   })
@@ -100,6 +103,7 @@ describe("createEnv — emptyStringAsUndefined", () => {
     } catch (err) {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["PORT"]!.kind).toBe("missing")
     }
   })

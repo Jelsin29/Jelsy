@@ -17,8 +17,11 @@ describe("createEnv — explain()", () => {
     const entries = getExplain(env)
     expect(entries).toHaveLength(3)
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const hostEntry = entries.find((e) => e.key === "HOST")!
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const portEntry = entries.find((e) => e.key === "PORT")!
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const debugEntry = entries.find((e) => e.key === "DEBUG")!
 
     expect(hostEntry.source).toBe("env")
@@ -34,7 +37,9 @@ describe("createEnv — explain()", () => {
     )
 
     const entries = getExplain(env)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.source).toBe("env")
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.value).toBe("https://api.example.com")
   })
 
@@ -46,7 +51,9 @@ describe("createEnv — explain()", () => {
     )
 
     const entries = getExplain(env)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.source).toBe("default")
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.value).toBe("0.0.0.0")
   })
 
@@ -58,7 +65,9 @@ describe("createEnv — explain()", () => {
     )
 
     const entries = getExplain(env)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.source).toBe("devDefault")
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.value).toBe("dev-secret")
   })
 
@@ -73,6 +82,7 @@ describe("createEnv — explain()", () => {
     expect(Object.keys(env)).not.toContain("explain")
 
     // Not in JSON.stringify
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const json = JSON.parse(JSON.stringify(env))
     expect(json).not.toHaveProperty("explain")
 
@@ -83,8 +93,11 @@ describe("createEnv — explain()", () => {
     // But exists on the object via getOwnPropertyDescriptor
     const descriptor = Object.getOwnPropertyDescriptor(env, "explain")
     expect(descriptor).toBeDefined()
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(descriptor!.enumerable).toBe(false)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(descriptor!.writable).toBe(false)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(descriptor!.configurable).toBe(false)
   })
 
@@ -96,7 +109,9 @@ describe("createEnv — explain()", () => {
     )
 
     const entries = getExplain(env)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.source).toBe("default")
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.value).toBeUndefined()
   })
 
@@ -108,6 +123,7 @@ describe("createEnv — explain()", () => {
     )
 
     const entries = getExplain(env)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.desc).toBe("Server hostname")
   })
 
@@ -151,9 +167,11 @@ describe("createEnv — explain()", () => {
     )
 
     const first = getExplain(env)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     first[0]!.value = "MUTATED"
 
     const second = getExplain(env)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(second[0]!.value).toBe("localhost")
   })
 
@@ -165,7 +183,9 @@ describe("createEnv — explain()", () => {
     )
 
     const entries = getExplain(env)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.source).toBe("default")
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.value).toBe("fallback")
   })
 })

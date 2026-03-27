@@ -13,7 +13,7 @@ export const string = <const C extends string = string>(
   options?: StringValidatorOptions<C>
 ): Validator<C> => {
   const minLength = options?.choices
-    ? (options?.minLength ?? 0)
+    ? (options.minLength ?? 0)
     : (options?.minLength ?? 1)
 
   return makeValidator<C>(
@@ -21,14 +21,14 @@ export const string = <const C extends string = string>(
     (value) => {
       if (minLength > 0 && value.length < minLength) {
         throw new Error(
-          `Must be at least ${minLength} character${minLength === 1 ? "" : "s"}`
+          `Must be at least ${String(minLength)} character${minLength === 1 ? "" : "s"}`
         )
       }
       if (
         options?.maxLength !== undefined &&
         value.length > options.maxLength
       ) {
-        throw new Error(`Must be at most ${options.maxLength} characters`)
+        throw new Error(`Must be at most ${String(options.maxLength)} characters`)
       }
       if (options?.choices && !options.choices.includes(value as C)) {
         throw new Error(`Must be one of: ${options.choices.join(", ")}`)

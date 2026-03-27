@@ -23,13 +23,14 @@ export const makeValidator = <T>(
       return options.transform(value)
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw {
         key,
         kind: "invalid" as const,
         message,
         ...(raw !== undefined && { received: raw }),
-        desc: options?.desc,
-        example: options?.example
+        desc: options.desc,
+        example: options.example
       }
     }
   }
@@ -51,6 +52,7 @@ export const makeValidator = <T>(
       if (options?.optional) {
         return undefined as T
       }
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw {
         key,
         kind: "missing" as const,
@@ -65,6 +67,7 @@ export const makeValidator = <T>(
       parsed = parseFn(raw)
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw {
         key,
         kind: "invalid" as const,
