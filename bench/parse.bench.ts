@@ -58,7 +58,7 @@ console.table(bench.table())
 // Check against budget
 const parse10k = bench.tasks.find((t) => t.name.includes("10K"))
 if (parse10k?.result) {
-  const avgMs = parse10k.result.mean * 1000
+  const avgMs = parse10k.result.mean
   console.log(`\n⏱  10K parse avg: ${avgMs.toFixed(2)}ms (budget: < 5ms)`)
   if (avgMs > 5) {
     console.error("❌ OVER BUDGET: 10K parse exceeds 5ms target")

@@ -10,7 +10,7 @@ import { createEnv, string, number, port, boolean, url } from "../src/index.js"
 const bench = new Bench({ time: 2000 })
 
 // Jelsy schema
-const jelsynEnv: Record<string, string> = {
+const jelsyEnv: Record<string, string> = {
   HOST: "api.example.com",
   PORT: "8080",
   DATABASE_URL: "https://db.example.com/prod",
@@ -28,7 +28,7 @@ const jelsySchema = {
 
 bench.add("Jelsy — parse 1K envs (5 validators)", () => {
   for (let i = 0; i < 1000; i++) {
-    createEnv(jelsySchema, { env: jelsynEnv })
+    createEnv(jelsySchema, { env: jelsyEnv })
   }
 })
 
@@ -46,28 +46,13 @@ try {
           DEBUG: bool(),
           MAX_RETRIES: num()
         },
-        { env: jelsynEnv }
+        { env: jelsyEnv }
       )
     }
   })
 } catch {
   console.log("⚠️  envsafe not installed — skipping comparison. Install with: npm install --save-dev envsafe")
 }
-
-// Serialization comparison
-const jelsyResult = createEnv(jelsySchema, { env: jelsynEnv })
-
-bench.add("Jelsy — structuredClone", () => {
-  structuredClone(jelsyResult)
-})
-
-bench.add("Jelsy — JSON.stringify", () => {
-  JSON.stringify(jelsyResult)
-})
-
-bench.add("Jelsy — spread", () => {
-  void { ...jelsyResult }
-})
 
 await bench.run()
 

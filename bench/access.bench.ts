@@ -64,9 +64,9 @@ console.log("\n📊 Property Access Benchmark Results:")
 console.table(bench.table())
 
 // Check frozen reads against budget
-const frozenTask = bench.tasks.find((t) => t.name.includes("Freeze") || t.name.includes("Jelsy"))
+const frozenTask = bench.tasks.find((t) => t.name.includes("freeze") || t.name.includes("Jelsy"))
 if (frozenTask?.result) {
-  const avgMs = frozenTask.result.mean * 1000
+  const avgMs = frozenTask.result.mean
   console.log(`\n⏱  1M frozen reads avg: ${avgMs.toFixed(2)}ms (budget: < 2ms)`)
   if (avgMs > 2) {
     console.error("❌ OVER BUDGET: 1M reads exceeds 2ms target")
