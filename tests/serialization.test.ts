@@ -68,7 +68,8 @@ describe("JSON.stringify", () => {
   it("does not include non-enumerable explain()", () => {
     const env = makeEnv()
     const json = JSON.stringify(env)
-    expect(json).not.toContain("explain")
+    const parsed = JSON.parse(json) as Record<string, unknown>
+    expect(Object.keys(parsed)).not.toContain("explain")
   })
 
   it("roundtrips correctly", () => {

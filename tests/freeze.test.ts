@@ -24,14 +24,14 @@ describe("Object.freeze behavior", () => {
     const env = makeEnv()
     expect(() => {
       ;(env as Record<string, unknown>)["HOST"] = "changed"
-    }).toThrow()
+    }).toThrow(TypeError)
   })
 
   it("adding new property throws in strict mode", () => {
     const env = makeEnv()
     expect(() => {
       ;(env as Record<string, unknown>)["NEW_PROP"] = "value"
-    }).toThrow()
+    }).toThrow(TypeError)
   })
 
   it("deleting property throws in strict mode", () => {
@@ -39,7 +39,7 @@ describe("Object.freeze behavior", () => {
     expect(() => {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete (env as Record<string, unknown>)["HOST"]
-    }).toThrow()
+    }).toThrow(TypeError)
   })
 
   it("Object.isExtensible returns false", () => {
@@ -114,20 +114,21 @@ describe("process.env mutation after createEnv", () => {
     const original = process.env["SNAPSHOT_TEST_VAR"]
     process.env["SNAPSHOT_TEST_VAR"] = "initial"
 
-    const env = createEnv(
-      { SNAPSHOT_TEST_VAR: string() },
-      { env: { SNAPSHOT_TEST_VAR: "initial" } }
-    )
+    try {
+      const env = createEnv(
+        { SNAPSHOT_TEST_VAR: string() },
+        { env: { SNAPSHOT_TEST_VAR: "initial" } }
+      )
 
-    // Mutate the source — should NOT affect the frozen env
-    process.env["SNAPSHOT_TEST_VAR"] = "mutated"
-    expect(env.SNAPSHOT_TEST_VAR).toBe("initial")
-
-    // Cleanup
-    if (original === undefined) {
-      delete process.env["SNAPSHOT_TEST_VAR"]
-    } else {
-      process.env["SNAPSHOT_TEST_VAR"] = original
+      // Mutate the source — should NOT affect the frozen env
+      process.env["SNAPSHOT_TEST_VAR"] = "mutated"
+      expect(env.SNAPSHOT_TEST_VAR).toBe("initial")
+    } finally {
+      if (original === undefined) {
+        delete process.env["SNAPSHOT_TEST_VAR"]
+      } else {
+        process.env["SNAPSHOT_TEST_VAR"] = original
+      }
     }
   })
 
