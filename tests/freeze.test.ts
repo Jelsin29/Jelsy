@@ -97,7 +97,8 @@ describe("Object.freeze behavior", () => {
 
   it("frozen object survives being passed as argument", () => {
     const env = makeEnv()
-    const readHost = (e: { HOST: string }): string => e.HOST
+    const readHost = (e: { HOST?: string | undefined }): string | undefined =>
+      e.HOST
     expect(readHost(env)).toBe("localhost")
   })
 })

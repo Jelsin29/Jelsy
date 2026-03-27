@@ -70,7 +70,8 @@ describe("custom validator", () => {
         const m = /^(\d+)(s|m|h)$/.exec(v)
         if (!m) throw new Error("Invalid duration")
         return (
-          parseInt(m[1]) * { s: 1, m: 60, h: 3600 }[m[2] as "s" | "m" | "h"]
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          parseInt(m[1]!) * { s: 1, m: 60, h: 3600 }[m[2] as "s" | "m" | "h"]
         )
       }
     })
@@ -85,7 +86,8 @@ describe("custom validator", () => {
         const m = /^(\d+)(s|m|h)$/.exec(v)
         if (!m) throw new Error("Invalid duration")
         return (
-          parseInt(m[1]) * { s: 1, m: 60, h: 3600 }[m[2] as "s" | "m" | "h"]
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          parseInt(m[1]!) * { s: 1, m: 60, h: 3600 }[m[2] as "s" | "m" | "h"]
         )
       }
     })

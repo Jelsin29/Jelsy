@@ -24,9 +24,9 @@ const makeReport = (
         key,
         kind: e.kind,
         message: e.message,
-        received: e.received,
-        desc: e.desc,
-        example: e.example
+        ...(e.received !== undefined && { received: e.received }),
+        ...(e.desc !== undefined && { desc: e.desc }),
+        ...(e.example !== undefined && { example: e.example })
       }
     ])
   ),
