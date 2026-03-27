@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    name: Test (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+  bundle-size:
+    name: Bundle Size Check
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and measure bundle size
+        run: |
+          npm run build
+          ESM_SIZE=$(wc -c < dist/index.mjs)
+          ESM_GZIP=$(gzip -9 -c dist/index.mjs | wc -c)
+          ESM_GZIP_KB=$(echo "scale=2; $ESM_GZIP / 1024" | bc)
+          echo "ESM raw: ${ESM_SIZE} bytes"
+          echo "ESM gzip: ${ESM_GZIP} bytes (${ESM_GZIP_KB} KB)"
+          if (( ESM_GZIP > 3072 )); then
+            echo "::error::Bundle size ${ESM_GZIP_KB}KB exceeds 3KB limit"
+            exit 1
+          fi
+          echo "✅ Bundle size within budget: ${ESM_GZIP_KB}KB < 3KB"
