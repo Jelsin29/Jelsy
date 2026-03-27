@@ -15,9 +15,6 @@ export const number = (options?: NumberValidatorOptions): Validator<number> => {
         throw new Error(`"${value}" is not a valid number`)
       }
       const num = Number(value)
-      if (Number.isNaN(num)) {
-        throw new Error(`"${value}" is not a valid number`)
-      }
       if (!Number.isFinite(num)) {
         throw new Error(`"${value}" is not a finite number`)
       }

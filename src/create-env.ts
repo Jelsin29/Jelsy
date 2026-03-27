@@ -47,36 +47,6 @@ export const createEnv = <TSchema extends EnvSchema>(
   const errors: Record<string, ValidationError> = {}
   const provenance: EnvExplainEntry[] = []
 
-  const inferProvenance = (
-    key: string,
-    raw: string | undefined,
-    parsed: unknown,
-    meta: {
-      type: string
-      default?: unknown
-      devDefault?: unknown
-      desc?: string
-    }
-  ): EnvExplainEntry => {
-    let source: "env" | "default" | "devDefault"
-
-    if (raw !== undefined) {
-      source = "env"
-    } else if (meta.devDefault !== undefined && nodeEnv !== "production") {
-      source = "devDefault"
-    } else {
-      source = "default"
-    }
-
-    return {
-      key,
-      value: parsed,
-      source,
-      type: meta.type,
-      ...(meta.desc && { desc: meta.desc })
-    }
-  }
-
   Object.keys(schema).forEach((key) => {
     const validator = schema[key]
     if (!validator) return
@@ -85,7 +55,18 @@ export const createEnv = <TSchema extends EnvSchema>(
     try {
       const parsed = validator._parse(key, raw, nodeEnv)
       result[key] = parsed
-      provenance.push(inferProvenance(key, raw, parsed, validator._meta))
+      const meta = validator._meta
+      const source: "env" | "default" | "devDefault" =
+        raw !== undefined ? "env"
+        : meta.devDefault !== undefined && nodeEnv !== "production" ? "devDefault"
+        : "default"
+      provenance.push({
+        key,
+        value: parsed,
+        source,
+        type: meta.type,
+        ...(meta.desc && { desc: meta.desc })
+      })
     } catch (err) {
       if (isValidationError(err)) {
         errors[key] = err

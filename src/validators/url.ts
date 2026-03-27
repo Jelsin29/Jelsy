@@ -13,7 +13,8 @@ export const url = (options?: UrlValidatorOptions): Validator<string> => {
   if (options?.protocols) {
     const bad = options.protocols.filter((p) => !p.endsWith(":"))
     if (bad.length > 0) {
-      throw new Error(`Protocols must end with ":". Got: ${bad.join(", ")}`)
+      throw new Error(`Protocols must end with ":"`)
+
     }
   }
 
@@ -30,9 +31,7 @@ export const url = (options?: UrlValidatorOptions): Validator<string> => {
       }
 
       if (!protocols.includes(parsed.protocol)) {
-        throw new Error(
-          `Protocol "${parsed.protocol}" is not allowed. Must be one of: ${protocols.join(", ")}`
-        )
+        throw new Error(`Protocol "${parsed.protocol}" not allowed`)
       }
 
       return value

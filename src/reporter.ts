@@ -1,121 +1,61 @@
-import type { Reporter, ValidationError, ValidationReport } from "./types.js"
+import type { Reporter, ValidationReport } from "./types.js"
 import { JelsyError } from "./errors.js"
 import { truncateValue } from "./utils.js"
 
 // -- Table formatting helpers ------------------------------------------------
 
-const MAX_COL_WIDTH = 30
-
-const getTerminalWidth = (): number => {
-  // process.stdout.columns is undefined in non-TTY environments (CI, piped output)
-  if (
-    typeof process !== "undefined" &&
-    (process.stdout.columns as number | undefined)
-  ) {
-    return process.stdout.columns
-  }
-  return 80
-}
-
-const padRight = (str: string, len: number): string =>
-  str.length >= len ? str : str + " ".repeat(len - str.length)
-
-const clampWidth = (min: number, content: number): number =>
-  Math.min(MAX_COL_WIDTH, Math.max(min, content))
-
-const truncateCol = (str: string, max: number): string =>
-  str.length <= max ? str : str.slice(0, max - 1) + "\u2026"
-
-const buildErrorMessage = (error: ValidationError): string => {
-  if (error.kind === "missing") return "Missing required"
-  return error.message
-}
-
-const formatReceived = (error: ValidationError): string => {
-  if (error.received === undefined) return "-"
-  return `"${truncateValue(error.received)}"`
-}
+const W = 30
+const pad = (s: string, n: number): string =>
+  s.length >= n ? s : s + " ".repeat(n - s.length)
+const clamp = (min: number, v: number): number => Math.min(W, Math.max(min, v))
+const trunc = (s: string, n: number): string =>
+  s.length <= n ? s : s.slice(0, n - 1) + "\u2026"
+const cell = (s: string, w: number): string => pad(trunc(s, w), w)
 
 // -- Table reporter ----------------------------------------------------------
 
 const formatTable = (report: ValidationReport): string => {
   const entries = Object.values(report.errors)
-  const termWidth = getTerminalWidth()
+  const tw =
+    typeof process !== "undefined" && (process.stdout.columns as number | undefined)
+      ? process.stdout.columns
+      : 80
+  const sep = "=".repeat(Math.min(tw, 72))
 
-  const separator = "=".repeat(Math.min(termWidth, 72))
+  const rows = entries.map((e) => [
+    e.key,
+    e.kind === "missing" ? "Missing required" : e.message,
+    e.received === undefined ? "-" : `"${truncateValue(e.received)}"`,
+    e.desc ?? ""
+  ])
 
-  const rows = entries.map((error) => ({
-    variable: error.key,
-    error: buildErrorMessage(error),
-    received: formatReceived(error),
-    description: error.desc ?? ""
-  }))
-
-  // Compute column widths (capped at MAX_COL_WIDTH)
-  const colWidths = {
-    variable: clampWidth(8, Math.max(...rows.map((r) => r.variable.length))),
-    error: clampWidth(5, Math.max(...rows.map((r) => r.error.length))),
-    received: clampWidth(8, Math.max(...rows.map((r) => r.received.length))),
-    description: clampWidth(
-      11,
-      Math.max(...rows.map((r) => r.description.length))
-    )
-  }
-
-  const headerLine = [
-    padRight("Variable", colWidths.variable),
-    padRight("Error", colWidths.error),
-    padRight("Received", colWidths.received),
-    padRight("Description", colWidths.description)
-  ].join("   ")
-
-  const dividerLine = [
-    "-".repeat(colWidths.variable),
-    "-".repeat(colWidths.error),
-    "-".repeat(colWidths.received),
-    "-".repeat(colWidths.description)
-  ].join("   ")
-
-  const dataLines = rows.map((row) =>
-    [
-      padRight(
-        truncateCol(row.variable, colWidths.variable),
-        colWidths.variable
-      ),
-      padRight(truncateCol(row.error, colWidths.error), colWidths.error),
-      padRight(
-        truncateCol(row.received, colWidths.received),
-        colWidths.received
-      ),
-      padRight(
-        truncateCol(row.description, colWidths.description),
-        colWidths.description
-      )
-    ].join("   ")
+  const mins = [8, 5, 8, 11]
+  const headers = ["Variable", "Error", "Received", "Description"]
+  const ws = headers.map((h, i) =>
+    clamp(mins[i] ?? 0, Math.max(h.length, ...rows.map((r) => (r[i] ?? "").length)))
   )
 
-  const missing = entries.filter((e) => e.kind === "missing").length
-  const invalid = entries.filter((e) => e.kind === "invalid").length
+  const J = (cs: string[]): string => cs.join("   ")
+  const hdr = J(ws.map((w, i) => pad(headers[i] ?? "", w)))
+  const div = J(ws.map((w) => "-".repeat(w)))
+  const data = rows.map((r) => J(ws.map((w, i) => cell(r[i] ?? "", w))))
+
+  let missing = 0
+  let invalid = 0
+  entries.forEach((e) => {
+    if (e.kind === "missing") missing++
+    else invalid++
+  })
   const parts: string[] = []
   if (missing > 0) parts.push(`${String(missing)} missing`)
   if (invalid > 0) parts.push(`${String(invalid)} invalid`)
-  const summaryText = parts.join(", ") + ". Exiting."
 
-  const lines = [
-    separator,
-    "  jelsy: Invalid Environment",
-    separator,
-    "",
-    " " + headerLine,
-    " " + dividerLine,
-    ...dataLines.map((l) => " " + l),
-    "",
-    separator,
-    `  ${summaryText}`,
-    separator
-  ]
-
-  return lines.join("\n")
+  return [
+    sep, "  jelsy: Invalid Environment", sep, "",
+    " " + hdr, " " + div,
+    ...data.map((l) => " " + l),
+    "", sep, `  ${parts.join(", ")}. Exiting.`, sep
+  ].join("\n")
 }
 
 // -- Exported reporters ------------------------------------------------------
