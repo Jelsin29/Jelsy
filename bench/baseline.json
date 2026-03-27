@@ -1,0 +1,22 @@
+{
+  "parse_10k": {
+    "target_ms": 5,
+    "threshold_percent": 10
+  },
+  "access_1m": {
+    "target_ms": 2,
+    "threshold_percent": 10
+  },
+  "bundle_full_kb": {
+    "target_kb": 3,
+    "threshold_percent": 10
+  },
+  "bundle_minimal_kb": {
+    "target_kb": 1,
+    "threshold_percent": 10
+  },
+  "explain_20var_ms": {
+    "target_ms": 0.5,
+    "threshold_percent": 10
+  }
+}
