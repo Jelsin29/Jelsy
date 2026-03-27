@@ -45,10 +45,7 @@ describe("createEnv — explain()", () => {
 
   // SPEC-17: source "default"
   it("reports source 'default' when value comes from default", () => {
-    const env = createEnv(
-      { HOST: string({ default: "0.0.0.0" }) },
-      { env: {} }
-    )
+    const env = createEnv({ HOST: string({ default: "0.0.0.0" }) }, { env: {} })
 
     const entries = getExplain(env)
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -73,10 +70,7 @@ describe("createEnv — explain()", () => {
 
   // SPEC-19: non-enumerable (Object.keys, JSON.stringify, spread, getOwnPropertyDescriptor)
   it("explain is non-enumerable — excluded from keys, JSON, spread", () => {
-    const env = createEnv(
-      { HOST: string() },
-      { env: { HOST: "localhost" } }
-    )
+    const env = createEnv({ HOST: string() }, { env: { HOST: "localhost" } })
 
     // Not in Object.keys
     expect(Object.keys(env)).not.toContain("explain")
@@ -103,10 +97,7 @@ describe("createEnv — explain()", () => {
 
   // source "default" for optional with no value
   it("reports source 'default' for optional vars with no value", () => {
-    const env = createEnv(
-      { OPT: string({ optional: true }) },
-      { env: {} }
-    )
+    const env = createEnv({ OPT: string({ optional: true }) }, { env: {} })
 
     const entries = getExplain(env)
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -129,10 +120,7 @@ describe("createEnv — explain()", () => {
 
   // omits desc when absent
   it("omits desc from entry when validator has no desc", () => {
-    const env = createEnv(
-      { HOST: string() },
-      { env: { HOST: "localhost" } }
-    )
+    const env = createEnv({ HOST: string() }, { env: { HOST: "localhost" } })
 
     const entries = getExplain(env)
     expect(entries[0]).not.toHaveProperty("desc")
@@ -147,7 +135,9 @@ describe("createEnv — explain()", () => {
         COUNT: number(),
         VERBOSE: boolean()
       },
-      { env: { HOST: "localhost", PORT: "3000", COUNT: "42", VERBOSE: "false" } }
+      {
+        env: { HOST: "localhost", PORT: "3000", COUNT: "42", VERBOSE: "false" }
+      }
     )
 
     const entries = getExplain(env)
@@ -161,10 +151,7 @@ describe("createEnv — explain()", () => {
 
   // returns copy (mutation safe)
   it("returns a copy — mutations do not affect internal state", () => {
-    const env = createEnv(
-      { HOST: string() },
-      { env: { HOST: "localhost" } }
-    )
+    const env = createEnv({ HOST: string() }, { env: { HOST: "localhost" } })
 
     const first = getExplain(env)
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

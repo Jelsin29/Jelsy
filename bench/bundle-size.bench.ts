@@ -37,16 +37,24 @@ const toKB = (bytes: number): string => (bytes / 1024).toFixed(2)
 console.log("┌────────────────────────────────────────┐")
 console.log("│  Format   │  Raw      │  min+gzip      │")
 console.log("├────────────────────────────────────────┤")
-console.log(`│  ESM      │  ${toKB(esmStat.size).padStart(6)}KB │  ${toKB(esmGzipped.length).padStart(6)}KB       │`)
-console.log(`│  CJS      │  ${toKB(cjsStat.size).padStart(6)}KB │  ${toKB(cjsGzipped.length).padStart(6)}KB       │`)
+console.log(
+  `│  ESM      │  ${toKB(esmStat.size).padStart(6)}KB │  ${toKB(esmGzipped.length).padStart(6)}KB       │`
+)
+console.log(
+  `│  CJS      │  ${toKB(cjsStat.size).padStart(6)}KB │  ${toKB(cjsGzipped.length).padStart(6)}KB       │`
+)
 console.log("└────────────────────────────────────────┘")
 
 const BUDGET_KB = 3
 const esmGzipKB = esmGzipped.length / 1024
 
-console.log(`\n⏱  ESM min+gzip: ${toKB(esmGzipped.length)}KB (budget: < ${String(BUDGET_KB)}KB)`)
+console.log(
+  `\n⏱  ESM min+gzip: ${toKB(esmGzipped.length)}KB (budget: < ${String(BUDGET_KB)}KB)`
+)
 if (esmGzipKB > BUDGET_KB) {
-  console.error(`❌ OVER BUDGET: ESM bundle is ${toKB(esmGzipped.length)}KB gzipped (limit: ${String(BUDGET_KB)}KB)`)
+  console.error(
+    `❌ OVER BUDGET: ESM bundle is ${toKB(esmGzipped.length)}KB gzipped (limit: ${String(BUDGET_KB)}KB)`
+  )
   process.exit(1)
 } else {
   console.log("✅ Within budget")

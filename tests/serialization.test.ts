@@ -1,5 +1,13 @@
 import { describe, it, expect } from "vitest"
-import { createEnv, string, number, port, boolean, url, email } from "../src/index.js"
+import {
+  createEnv,
+  string,
+  number,
+  port,
+  boolean,
+  url,
+  email
+} from "../src/index.js"
 
 // ---------------------------------------------------------------------------
 // Serialization tests — proving Jelsy (Object.freeze) beats Proxy libraries
@@ -74,7 +82,10 @@ describe("JSON.stringify", () => {
 
   it("roundtrips correctly", () => {
     const env = makeEnv()
-    const roundtripped = JSON.parse(JSON.stringify(env)) as Record<string, unknown>
+    const roundtripped = JSON.parse(JSON.stringify(env)) as Record<
+      string,
+      unknown
+    >
     expect(roundtripped).toEqual({
       HOST: "localhost",
       PORT: 3000,
@@ -132,7 +143,14 @@ describe("Object enumeration", () => {
   it("Object.keys returns all schema keys", () => {
     const env = makeEnv()
     const keys = Object.keys(env)
-    expect(keys).toEqual(["HOST", "PORT", "DEBUG", "API_URL", "ADMIN_EMAIL", "MAX_RETRIES"])
+    expect(keys).toEqual([
+      "HOST",
+      "PORT",
+      "DEBUG",
+      "API_URL",
+      "ADMIN_EMAIL",
+      "MAX_RETRIES"
+    ])
   })
 
   it("Object.entries returns all key-value pairs", () => {

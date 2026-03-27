@@ -1,11 +1,6 @@
 import { describe, it, expect, vi } from "vitest"
 import { createEnv } from "../src/index.js"
-import {
-  string,
-  port,
-  boolean,
-  url
-} from "../src/index.js"
+import { string, port, boolean, url } from "../src/index.js"
 import { JelsyError } from "../src/errors.js"
 import type { ValidationReport } from "../src/types.js"
 
@@ -221,7 +216,10 @@ describe("createEnv", () => {
     try {
       createEnv(
         {
-          API_URL: url({ desc: "Backend API", example: "https://api.example.com" })
+          API_URL: url({
+            desc: "Backend API",
+            example: "https://api.example.com"
+          })
         },
         { env: { API_URL: "not-a-url" }, reporter }
       )
@@ -245,10 +243,7 @@ describe("createEnv", () => {
     const reporter = vi.fn() // does nothing, returns void
 
     expect(() =>
-      createEnv(
-        { MISSING: string() },
-        { env: {}, reporter }
-      )
+      createEnv({ MISSING: string() }, { env: {}, reporter })
     ).toThrow(JelsyError)
   })
 
@@ -260,10 +255,7 @@ describe("createEnv", () => {
     })
 
     expect(() =>
-      createEnv(
-        { MISSING: string() },
-        { env: {}, reporter }
-      )
+      createEnv({ MISSING: string() }, { env: {}, reporter })
     ).toThrow(customError)
   })
 
@@ -277,10 +269,7 @@ describe("createEnv", () => {
 
   // Spread excludes explain
   it("spread operator excludes explain from result", () => {
-    const env = createEnv(
-      { HOST: string() },
-      { env: { HOST: "localhost" } }
-    )
+    const env = createEnv({ HOST: string() }, { env: { HOST: "localhost" } })
 
     const spread = { ...env }
     expect(spread).toEqual({ HOST: "localhost" })

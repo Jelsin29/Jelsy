@@ -20,7 +20,14 @@ const makeReport = (
   errors: Object.fromEntries(
     Object.entries(errors).map(([key, e]) => [
       key,
-      { key, kind: e.kind, message: e.message, received: e.received, desc: e.desc, example: e.example }
+      {
+        key,
+        kind: e.kind,
+        message: e.message,
+        received: e.received,
+        desc: e.desc,
+        example: e.example
+      }
     ])
   ),
   env: {}
@@ -217,7 +224,9 @@ describe("defaultReporter", () => {
       HOST: { kind: "missing", message: "Missing required" }
     })
 
-    expect(() => { defaultReporter(report); }).toThrow("process.exit called")
+    expect(() => {
+      defaultReporter(report)
+    }).toThrow("process.exit called")
     expect(stderrSpy).toHaveBeenCalledOnce()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const output = stderrSpy.mock.calls[0]![0] as string

@@ -5,7 +5,14 @@
  * If zod is not installed, this benchmark is skipped.
  */
 import { Bench } from "tinybench"
-import { createEnv, string, number, port, boolean, enums } from "../src/index.js"
+import {
+  createEnv,
+  string,
+  number,
+  port,
+  boolean,
+  enums
+} from "../src/index.js"
 
 const bench = new Bench({ time: 2000 })
 
@@ -39,7 +46,9 @@ try {
   const zodSchema = z.object({
     HOST: z.string().min(1),
     PORT: z.string().transform(Number).pipe(z.number().int().min(1).max(65535)),
-    DEBUG: z.enum(["true", "false", "1", "0"]).transform((v) => v === "true" || v === "1"),
+    DEBUG: z
+      .enum(["true", "false", "1", "0"])
+      .transform((v) => v === "true" || v === "1"),
     MAX_RETRIES: z.string().transform(Number).pipe(z.number().int()),
     NODE_ENV: z.enum(["development", "staging", "production"])
   })
@@ -50,7 +59,9 @@ try {
     }
   })
 } catch {
-  console.log("⚠️  zod not installed — skipping comparison. Install with: npm install --save-dev zod")
+  console.log(
+    "⚠️  zod not installed — skipping comparison. Install with: npm install --save-dev zod"
+  )
 }
 
 await bench.run()

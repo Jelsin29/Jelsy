@@ -37,7 +37,6 @@ describe("Object.freeze behavior", () => {
   it("deleting property throws in strict mode", () => {
     const env = makeEnv()
     expect(() => {
-       
       delete (env as Record<string, unknown>)["HOST"]
     }).toThrow(TypeError)
   })
@@ -90,14 +89,8 @@ describe("Object.freeze behavior", () => {
   })
 
   it("multiple createEnv calls return independent objects", () => {
-    const env1 = createEnv(
-      { A: string({ default: "one" }) },
-      { env: {} }
-    )
-    const env2 = createEnv(
-      { A: string({ default: "two" }) },
-      { env: {} }
-    )
+    const env1 = createEnv({ A: string({ default: "one" }) }, { env: {} })
+    const env2 = createEnv({ A: string({ default: "two" }) }, { env: {} })
     expect(env1.A).toBe("one")
     expect(env2.A).toBe("two")
   })
@@ -137,10 +130,7 @@ describe("process.env mutation after createEnv", () => {
 
   it("custom env source mutation does not affect frozen result", () => {
     const source: Record<string, string> = { KEY: "value" }
-    const env = createEnv(
-      { KEY: string() },
-      { env: source }
-    )
+    const env = createEnv({ KEY: string() }, { env: source })
 
     source["KEY"] = "changed"
     expect(env.KEY).toBe("value")

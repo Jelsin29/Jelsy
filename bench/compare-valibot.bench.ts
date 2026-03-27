@@ -5,7 +5,14 @@
  * If valibot is not installed, this benchmark is skipped.
  */
 import { Bench } from "tinybench"
-import { createEnv, string, number, port, boolean, enums } from "../src/index.js"
+import {
+  createEnv,
+  string,
+  number,
+  port,
+  boolean,
+  enums
+} from "../src/index.js"
 
 const bench = new Bench({ time: 2000 })
 
@@ -38,9 +45,24 @@ try {
 
   const valibotSchema = v.object({
     HOST: v.pipe(v.string(), v.minLength(1)),
-    PORT: v.pipe(v.string(), v.transform(Number), v.number(), v.integer(), v.minValue(1), v.maxValue(65535)),
-    DEBUG: v.pipe(v.picklist(["true", "false", "1", "0"]), v.transform((val: string) => val === "true" || val === "1")),
-    MAX_RETRIES: v.pipe(v.string(), v.transform(Number), v.number(), v.integer()),
+    PORT: v.pipe(
+      v.string(),
+      v.transform(Number),
+      v.number(),
+      v.integer(),
+      v.minValue(1),
+      v.maxValue(65535)
+    ),
+    DEBUG: v.pipe(
+      v.picklist(["true", "false", "1", "0"]),
+      v.transform((val: string) => val === "true" || val === "1")
+    ),
+    MAX_RETRIES: v.pipe(
+      v.string(),
+      v.transform(Number),
+      v.number(),
+      v.integer()
+    ),
     NODE_ENV: v.picklist(["development", "staging", "production"])
   })
 
@@ -50,7 +72,9 @@ try {
     }
   })
 } catch {
-  console.log("⚠️  valibot not installed — skipping comparison. Install with: npm install --save-dev valibot")
+  console.log(
+    "⚠️  valibot not installed — skipping comparison. Install with: npm install --save-dev valibot"
+  )
 }
 
 await bench.run()

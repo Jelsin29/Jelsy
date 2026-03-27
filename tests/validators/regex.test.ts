@@ -60,7 +60,10 @@ describe("regex validator", () => {
   })
 
   it("transform applied after validation", () => {
-    const v = regex({ pattern: /^\d+$/, transform: (val) => val.padStart(5, "0") })
+    const v = regex({
+      pattern: /^\d+$/,
+      transform: (val) => val.padStart(5, "0")
+    })
     const result = v._parse("NUM", "42", undefined)
 
     expect(result).toBe("00042")

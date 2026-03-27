@@ -28,7 +28,9 @@ export const string = <const C extends string = string>(
         options?.maxLength !== undefined &&
         value.length > options.maxLength
       ) {
-        throw new Error(`Must be at most ${String(options.maxLength)} characters`)
+        throw new Error(
+          `Must be at most ${String(options.maxLength)} characters`
+        )
       }
       if (options?.choices && !options.choices.includes(value as C)) {
         throw new Error(`Must be one of: ${options.choices.join(", ")}`)

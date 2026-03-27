@@ -3,7 +3,19 @@
  * Target: < 5ms
  */
 import { Bench } from "tinybench"
-import { createEnv, string, number, port, url, email, boolean, json, enums, regex, custom } from "../src/index.js"
+import {
+  createEnv,
+  string,
+  number,
+  port,
+  url,
+  email,
+  boolean,
+  json,
+  enums,
+  regex,
+  custom
+} from "../src/index.js"
 
 const bench = new Bench({ time: 2000 })
 
@@ -29,7 +41,9 @@ const schema = {
   DEBUG: boolean(),
   MAX_RETRIES: number({ integer: true }),
   CONFIG: json<{ feature: boolean }>(),
-  NODE_ENV: enums({ values: ["development", "staging", "production"] as const }),
+  NODE_ENV: enums({
+    values: ["development", "staging", "production"] as const
+  }),
   LOG_PATTERN: regex({ pattern: /^\d{4}-\d{2}-\d{2}$/ }),
   CUSTOM_ID: custom({ parser: (v) => v })
 }

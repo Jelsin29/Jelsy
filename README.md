@@ -13,15 +13,15 @@ Jelsy validates your environment variables at startup and gives you a fully type
 
 ## Why Jelsy?
 
-| Feature | Jelsy | envsafe | envalid | t3-env |
-|---------|-------|---------|---------|--------|
-| `structuredClone(env)` | **Works** | Throws | Throws | N/A |
-| `JSON.stringify(env)` | **Correct** | `"{}"` | Partial | N/A |
-| `{ ...env }` | **Works** | Loses props | Loses props | N/A |
-| Bundle size | **< 3KB** | ~4KB | ~6KB | ~15KB+ |
-| Dependencies | **0** | 0 | 0 | Zod/Valibot |
-| Tree-shakable | **Yes** | No | No | Partial |
-| `explain()` | **Yes** | No | No | No |
+| Feature                | Jelsy       | envsafe     | envalid     | t3-env      |
+| ---------------------- | ----------- | ----------- | ----------- | ----------- |
+| `structuredClone(env)` | **Works**   | Throws      | Throws      | N/A         |
+| `JSON.stringify(env)`  | **Correct** | `"{}"`      | Partial     | N/A         |
+| `{ ...env }`           | **Works**   | Loses props | Loses props | N/A         |
+| Bundle size            | **< 3KB**   | ~4KB        | ~6KB        | ~15KB+      |
+| Dependencies           | **0**       | 0           | 0           | Zod/Valibot |
+| Tree-shakable          | **Yes**     | No          | No          | Partial     |
+| `explain()`            | **Yes**     | No          | No          | No          |
 
 ## Install
 
@@ -32,24 +32,35 @@ npm install jelsy
 ## Quick Start
 
 ```typescript
-import { createEnv, string, number, port, url, email, boolean, enums } from 'jelsy';
+import {
+  createEnv,
+  string,
+  number,
+  port,
+  url,
+  email,
+  boolean,
+  enums
+} from "jelsy"
 
 const env = createEnv({
   DATABASE_URL: url(),
   PORT: port({ default: 3000 }),
-  NODE_ENV: enums({ values: ['development', 'staging', 'production'] as const }),
+  NODE_ENV: enums({
+    values: ["development", "staging", "production"] as const
+  }),
   DEBUG: boolean({ default: false }),
   ADMIN_EMAIL: email(),
   API_KEY: string(),
-  MAX_RETRIES: number({ default: 3, integer: true }),
-});
+  MAX_RETRIES: number({ default: 3, integer: true })
+})
 
 // Fully typed:
-env.PORT;         // number
-env.NODE_ENV;     // 'development' | 'staging' | 'production'
-env.DEBUG;        // boolean
-env.DATABASE_URL; // string (validated URL)
-env.MISSING;      // TS error: Property 'MISSING' does not exist
+env.PORT // number
+env.NODE_ENV // 'development' | 'staging' | 'production'
+env.DEBUG // boolean
+env.DATABASE_URL // string (validated URL)
+env.MISSING // TS error: Property 'MISSING' does not exist
 ```
 
 ## Validators
@@ -57,37 +68,37 @@ env.MISSING;      // TS error: Property 'MISSING' does not exist
 ### `string(options?)`
 
 ```typescript
-API_KEY: string()                                    // required, non-empty
-APP_NAME: string({ default: 'myapp' })               // with default
-REGION: string({ choices: ['us', 'eu'] as const })   // literal union: 'us' | 'eu'
-BIO: string({ minLength: 0, maxLength: 500 })        // allow empty, cap at 500
+API_KEY: string() // required, non-empty
+APP_NAME: string({ default: "myapp" }) // with default
+REGION: string({ choices: ["us", "eu"] as const }) // literal union: 'us' | 'eu'
+BIO: string({ minLength: 0, maxLength: 500 }) // allow empty, cap at 500
 ```
 
 ### `number(options?)`
 
 ```typescript
-MAX_RETRIES: number({ default: 3, integer: true })   // integer only
-RATE_LIMIT: number({ min: 0.1, max: 100 })           // float range
+MAX_RETRIES: number({ default: 3, integer: true }) // integer only
+RATE_LIMIT: number({ min: 0.1, max: 100 }) // float range
 ```
 
 ### `port(options?)`
 
 ```typescript
-PORT: port({ default: 3000 })   // integer 1-65535
+PORT: port({ default: 3000 }) // integer 1-65535
 ```
 
 ### `url(options?)`
 
 ```typescript
-DATABASE_URL: url()                                          // http/https
-REDIS_URL: url({ protocols: ['redis:', 'rediss:'] })         // custom protocols
+DATABASE_URL: url() // http/https
+REDIS_URL: url({ protocols: ["redis:", "rediss:"] }) // custom protocols
 ```
 
 ### `email(options?)`
 
 ```typescript
 ADMIN_EMAIL: email()
-SUPPORT_EMAIL: email({ default: 'help@example.com' })
+SUPPORT_EMAIL: email({ default: "help@example.com" })
 ```
 
 ### `boolean(options?)`
@@ -108,22 +119,22 @@ ALLOWED_IPS: json<string[]>({ default: [] })
 ### `enums(options)`
 
 ```typescript
-NODE_ENV: enums({ values: ['development', 'staging', 'production'] as const })
+NODE_ENV: enums({ values: ["development", "staging", "production"] as const })
 // Type: 'development' | 'staging' | 'production'
 ```
 
 ### `regex(options)`
 
 ```typescript
-AWS_REGION: regex({ pattern: /^[a-z]{2}-[a-z]+-\d$/, example: 'us-east-1' })
+AWS_REGION: regex({ pattern: /^[a-z]{2}-[a-z]+-\d$/, example: "us-east-1" })
 ```
 
 ### `custom<T>(options)`
 
 ```typescript
 ALLOWED_ORIGINS: custom({
-  parser: (value) => value.split(',').map(s => s.trim()),
-  desc: 'Comma-separated CORS origins',
+  parser: (value) => value.split(",").map((s) => s.trim()),
+  desc: "Comma-separated CORS origins"
 })
 // Type: string[]
 ```
@@ -148,22 +159,25 @@ All validators share these options:
 
 ```typescript
 const env = createEnv(schema, {
-  env: process.env,              // Custom env source (default: process.env)
-  reporter: customReporter,      // Custom error reporter
-  prefix: 'MYAPP_',             // Read MYAPP_PORT instead of PORT
-  emptyStringAsUndefined: true,  // Treat '' as missing (default: true)
-});
+  env: process.env, // Custom env source (default: process.env)
+  reporter: customReporter, // Custom error reporter
+  prefix: "MYAPP_", // Read MYAPP_PORT instead of PORT
+  emptyStringAsUndefined: true // Treat '' as missing (default: true)
+})
 ```
 
 ### Prefix
 
 ```typescript
-const env = createEnv({
-  PORT: port({ default: 3000 }),
-  DATABASE_URL: url(),
-}, {
-  prefix: 'MYAPP_',
-});
+const env = createEnv(
+  {
+    PORT: port({ default: 3000 }),
+    DATABASE_URL: url()
+  },
+  {
+    prefix: "MYAPP_"
+  }
+)
 // Reads MYAPP_PORT and MYAPP_DATABASE_URL from process.env
 // Access via env.PORT and env.DATABASE_URL
 ```
@@ -190,17 +204,20 @@ When validation fails, Jelsy shows a formatted error table:
 ### Custom Reporter
 
 ```typescript
-import { createEnv, string, port } from 'jelsy';
+import { createEnv, string, port } from "jelsy"
 
-const env = createEnv({
-  PORT: port(),
-  API_KEY: string(),
-}, {
-  reporter: ({ errors }) => {
-    // Send to Sentry, PagerDuty, etc.
-    console.error(`Missing/invalid: ${Object.keys(errors).join(', ')}`);
+const env = createEnv(
+  {
+    PORT: port(),
+    API_KEY: string()
   },
-});
+  {
+    reporter: ({ errors }) => {
+      // Send to Sentry, PagerDuty, etc.
+      console.error(`Missing/invalid: ${Object.keys(errors).join(", ")}`)
+    }
+  }
+)
 ```
 
 ## `explain()` — Debug Provenance
@@ -209,10 +226,10 @@ const env = createEnv({
 const env = createEnv({
   PORT: port({ default: 3000 }),
   DATABASE_URL: url(),
-  DEBUG: boolean({ devDefault: true, default: false }),
-});
+  DEBUG: boolean({ devDefault: true, default: false })
+})
 
-console.table(env.explain());
+console.table(env.explain())
 ```
 
 Output:
@@ -230,30 +247,36 @@ No other env validation library has this. When a deployment fails because `DATAB
 ## Browser / Vite / Webpack
 
 ```typescript
-import { createEnv, url, string } from 'jelsy';
+import { createEnv, url, string } from "jelsy"
 
-export const env = createEnv({
-  VITE_API_URL: url(),
-  VITE_APP_NAME: string({ default: 'MyApp' }),
-}, {
-  env: import.meta.env as Record<string, string | undefined>,
-});
+export const env = createEnv(
+  {
+    VITE_API_URL: url(),
+    VITE_APP_NAME: string({ default: "MyApp" })
+  },
+  {
+    env: import.meta.env as Record<string, string | undefined>
+  }
+)
 ```
 
 ## Testing
 
 ```typescript
-import { createEnv, port, url } from 'jelsy';
+import { createEnv, port, url } from "jelsy"
 
-test('uses default port', () => {
-  const env = createEnv({
-    PORT: port({ default: 3000 }),
-    DATABASE_URL: url(),
-  }, {
-    env: { DATABASE_URL: 'https://localhost:5432/test' },
-  });
-  expect(env.PORT).toBe(3000);
-});
+test("uses default port", () => {
+  const env = createEnv(
+    {
+      PORT: port({ default: 3000 }),
+      DATABASE_URL: url()
+    },
+    {
+      env: { DATABASE_URL: "https://localhost:5432/test" }
+    }
+  )
+  expect(env.PORT).toBe(3000)
+})
 ```
 
 ## Serialization
@@ -276,11 +299,11 @@ Jelsy infers the correct TypeScript types from your schema:
 
 ```typescript
 const env = createEnv({
-  PORT: port({ default: 3000 }),           // number (has default → always present)
-  HOST: string(),                           // string (required)
-  DEBUG: boolean({ optional: true }),       // boolean | undefined
-  NODE_ENV: enums({ values: ['dev', 'prod'] as const }), // 'dev' | 'prod'
-});
+  PORT: port({ default: 3000 }), // number (has default → always present)
+  HOST: string(), // string (required)
+  DEBUG: boolean({ optional: true }), // boolean | undefined
+  NODE_ENV: enums({ values: ["dev", "prod"] as const }) // 'dev' | 'prod'
+})
 
 // Inferred type:
 // {

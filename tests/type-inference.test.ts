@@ -5,7 +5,7 @@ import type {
   Validator,
   ValidatorMeta,
   ValidatorOptions,
-  InferEnv,
+  InferEnv
 } from "../src/types.js"
 import type { StringValidatorOptions } from "../src/validators/string.js"
 import type { NumberValidatorOptions } from "../src/validators/number.js"
@@ -64,9 +64,9 @@ describe("number() types", () => {
   })
 
   it("accepts NumberValidatorOptions | undefined as parameter", () => {
-    expectTypeOf(number).parameter(0).toEqualTypeOf<
-      NumberValidatorOptions | undefined
-    >()
+    expectTypeOf(number)
+      .parameter(0)
+      .toEqualTypeOf<NumberValidatorOptions | undefined>()
   })
 
   it("NumberValidatorOptions.min is number | undefined", () => {
@@ -97,9 +97,9 @@ describe("port() types", () => {
   })
 
   it("accepts ValidatorOptions<number> as parameter", () => {
-    expectTypeOf(port).parameter(0).toEqualTypeOf<
-      ValidatorOptions<number> | undefined
-    >()
+    expectTypeOf(port)
+      .parameter(0)
+      .toEqualTypeOf<ValidatorOptions<number> | undefined>()
   })
 })
 
@@ -112,9 +112,9 @@ describe("boolean() types", () => {
   })
 
   it("accepts ValidatorOptions<boolean> as parameter", () => {
-    expectTypeOf(boolean).parameter(0).toEqualTypeOf<
-      ValidatorOptions<boolean> | undefined
-    >()
+    expectTypeOf(boolean)
+      .parameter(0)
+      .toEqualTypeOf<ValidatorOptions<boolean> | undefined>()
   })
 })
 
@@ -127,9 +127,9 @@ describe("url() types", () => {
   })
 
   it("accepts UrlValidatorOptions as parameter", () => {
-    expectTypeOf(url).parameter(0).toEqualTypeOf<
-      UrlValidatorOptions | undefined
-    >()
+    expectTypeOf(url)
+      .parameter(0)
+      .toEqualTypeOf<UrlValidatorOptions | undefined>()
   })
 
   it("UrlValidatorOptions extends ValidatorOptions<string>", () => {
@@ -152,9 +152,9 @@ describe("email() types", () => {
   })
 
   it("accepts ValidatorOptions<string> | undefined as parameter", () => {
-    expectTypeOf(email).parameter(0).toEqualTypeOf<
-      ValidatorOptions<string> | undefined
-    >()
+    expectTypeOf(email)
+      .parameter(0)
+      .toEqualTypeOf<ValidatorOptions<string> | undefined>()
   })
 })
 
@@ -196,15 +196,13 @@ describe("enums() types", () => {
   })
 
   it("EnumsValidatorOptions extends ValidatorOptions", () => {
-    expectTypeOf<EnumsValidatorOptions<"x">>().toExtend<
-      ValidatorOptions<"x">
-    >()
+    expectTypeOf<EnumsValidatorOptions<"x">>().toExtend<ValidatorOptions<"x">>()
   })
 
   it("parameter requires EnumsValidatorOptions with correct type", () => {
-    expectTypeOf<typeof enums<"dev" | "prod">>().parameter(0).toEqualTypeOf<
-      EnumsValidatorOptions<"dev" | "prod">
-    >()
+    expectTypeOf<typeof enums<"dev" | "prod">>()
+      .parameter(0)
+      .toEqualTypeOf<EnumsValidatorOptions<"dev" | "prod">>()
   })
 })
 
@@ -221,9 +219,7 @@ describe("regex() types", () => {
   })
 
   it("RegexValidatorOptions extends ValidatorOptions<string>", () => {
-    expectTypeOf<RegexValidatorOptions>().toExtend<
-      ValidatorOptions<string>
-    >()
+    expectTypeOf<RegexValidatorOptions>().toExtend<ValidatorOptions<string>>()
   })
 })
 

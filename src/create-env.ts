@@ -20,8 +20,8 @@ export const createEnv = <TSchema extends EnvSchema>(
   options?: CreateEnvOptions
 ): Readonly<InferEnv<TSchema>> => {
   // 1. Resolve env source
-  const envSource = (options?.env ??
-    (typeof process !== "undefined" ? process.env : {}))
+  const envSource =
+    options?.env ?? (typeof process !== "undefined" ? process.env : {})
 
   // 2. Compute emptyStringAsUndefined early — needed for both nodeEnv and resolveRaw
   const emptyAsUndefined = options?.emptyStringAsUndefined ?? true
@@ -30,7 +30,9 @@ export const createEnv = <TSchema extends EnvSchema>(
   // Uses ?? (not ||) so that explicit empty string is preserved unless emptyAsUndefined is on.
   const rawNodeEnv = envSource["NODE_ENV"]
   const nodeEnv =
-    emptyAsUndefined && rawNodeEnv === "" ? undefined : (rawNodeEnv ?? undefined)
+    emptyAsUndefined && rawNodeEnv === ""
+      ? undefined
+      : (rawNodeEnv ?? undefined)
 
   // 4. Build resolveRaw helper (prefix + emptyStringAsUndefined)
   const resolveRaw = (key: string): string | undefined => {
@@ -49,7 +51,12 @@ export const createEnv = <TSchema extends EnvSchema>(
     key: string,
     raw: string | undefined,
     parsed: unknown,
-    meta: { type: string; default?: unknown; devDefault?: unknown; desc?: string }
+    meta: {
+      type: string
+      default?: unknown
+      devDefault?: unknown
+      desc?: string
+    }
   ): EnvExplainEntry => {
     let source: "env" | "default" | "devDefault"
 
@@ -107,8 +114,7 @@ export const createEnv = <TSchema extends EnvSchema>(
     enumerable: false,
     configurable: false,
     writable: false,
-    value: (): EnvExplainEntry[] =>
-      provenance.map((entry) => ({ ...entry }))
+    value: (): EnvExplainEntry[] => provenance.map((entry) => ({ ...entry }))
   })
 
   // 8. Freeze and return

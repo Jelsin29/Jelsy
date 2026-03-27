@@ -1,5 +1,14 @@
 import { describe, it, expect } from "vitest"
-import { createEnv, string, number, port, boolean, url, enums, json } from "../src/index.js"
+import {
+  createEnv,
+  string,
+  number,
+  port,
+  boolean,
+  url,
+  enums,
+  json
+} from "../src/index.js"
 import { JelsyError } from "../src/errors.js"
 
 // ---------------------------------------------------------------------------
@@ -35,12 +44,9 @@ describe("empty env — all defaults", () => {
   })
 
   it("throws when env is empty and required vars have no defaults", () => {
-    expect(() =>
-      createEnv(
-        { REQUIRED: string() },
-        { env: {} }
-      )
-    ).toThrow(JelsyError)
+    expect(() => createEnv({ REQUIRED: string() }, { env: {} })).toThrow(
+      JelsyError
+    )
   })
 })
 
@@ -75,7 +81,10 @@ describe("browser environment (no process)", () => {
         APP_NAME: string({ default: "MyApp" })
       },
       {
-        env: { API_URL: "https://api.example.com" } as Record<string, string | undefined>
+        env: { API_URL: "https://api.example.com" } as Record<
+          string,
+          string | undefined
+        >
       }
     )
     expect(env.API_URL).toBe("https://api.example.com")

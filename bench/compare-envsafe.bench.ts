@@ -34,7 +34,14 @@ bench.add("Jelsy — parse 1K envs (5 validators)", () => {
 
 // Try to load envsafe for comparison
 try {
-  const { envsafe, port: envsafePort, str, bool, url: envsafeUrl, num } = await import("envsafe")
+  const {
+    envsafe,
+    port: envsafePort,
+    str,
+    bool,
+    url: envsafeUrl,
+    num
+  } = await import("envsafe")
 
   bench.add("envsafe — parse 1K envs (5 validators)", () => {
     for (let i = 0; i < 1000; i++) {
@@ -51,7 +58,9 @@ try {
     }
   })
 } catch {
-  console.log("⚠️  envsafe not installed — skipping comparison. Install with: npm install --save-dev envsafe")
+  console.log(
+    "⚠️  envsafe not installed — skipping comparison. Install with: npm install --save-dev envsafe"
+  )
 }
 
 await bench.run()
