@@ -1,5 +1,8 @@
 import type { Validator, ValidatorMeta, ValidatorOptions } from "../types.js"
 
+const errMsg = (err: unknown): string =>
+  err instanceof Error ? err.message : String(err)
+
 export const makeValidator = <T>(
   type: string,
   parseFn: (value: string) => T,
@@ -17,19 +20,20 @@ export const makeValidator = <T>(
     ...(options?.docs !== undefined && { docs: options.docs })
   }
 
+  const de = { desc: options?.desc, example: options?.example }
+
   const applyTransform = (key: string, value: T, raw?: string): T => {
     if (!options?.transform) return value
     try {
       return options.transform(value)
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err)
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw {
         key,
         kind: "invalid" as const,
-        message,
+        message: errMsg(err),
         ...(raw !== undefined && { received: raw }),
-        desc: options?.desc,
-        example: options?.example
+        ...de
       }
     }
   }
@@ -51,12 +55,12 @@ export const makeValidator = <T>(
       if (options?.optional) {
         return undefined as T
       }
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw {
         key,
         kind: "missing" as const,
-        message: "Required — missing and no default",
-        desc: options?.desc,
-        example: options?.example
+        message: "Required \u2014 missing and no default",
+        ...de
       }
     }
 
@@ -64,14 +68,13 @@ export const makeValidator = <T>(
     try {
       parsed = parseFn(raw)
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err)
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw {
         key,
         kind: "invalid" as const,
-        message,
+        message: errMsg(err),
         received: raw,
-        desc: options?.desc,
-        example: options?.example
+        ...de
       }
     }
 

@@ -15,7 +15,7 @@ export const regex = (options: RegexValidatorOptions): Validator<string> => {
         pattern.lastIndex = 0
       }
       if (!pattern.test(value)) {
-        throw new Error(`Must match pattern ${pattern}`)
+        throw new Error(`Must match pattern ${pattern.toString()}`)
       }
       return value
     },

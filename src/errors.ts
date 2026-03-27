@@ -15,7 +15,7 @@ export class JelsyAccessError extends Error {
   public readonly key: string
 
   constructor(key: string) {
-    super(`Environment variable "${key}" is not defined in the schema`)
+    super(`"${key}" is not in schema`)
     Object.setPrototypeOf(this, new.target.prototype)
     this.name = "JelsyAccessError"
     this.key = key

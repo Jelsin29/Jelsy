@@ -6,9 +6,7 @@ import { makeValidator } from "./make-validator.js"
 // for simplicity; do not "fix" without updating tests and docs.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-export const email = (
-  options?: ValidatorOptions<string>
-): Validator<string> =>
+export const email = (options?: ValidatorOptions<string>): Validator<string> =>
   makeValidator<string>(
     "email",
     (value) => {

@@ -37,14 +37,12 @@ describe("createEnv — prefix option", () => {
   // SPEC-21b: unprefixed key in env NOT found when prefix set -> throws missing
   it("throws missing when env has unprefixed key but prefix is set", () => {
     try {
-      createEnv(
-        { PORT: port() },
-        { env: { PORT: "3000" }, prefix: "MYAPP_" }
-      )
+      createEnv({ PORT: port() }, { env: { PORT: "3000" }, prefix: "MYAPP_" })
       expect.unreachable("should have thrown")
     } catch (err) {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["PORT"]!.kind).toBe("missing")
     }
   })
@@ -77,17 +75,17 @@ describe("createEnv — prefix option", () => {
 
     const entries = getExplain(env)
     expect(entries).toHaveLength(1)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.key).toBe("PORT")
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.source).toBe("env")
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(entries[0]!.value).toBe(4000)
   })
 
   // no prefix (undefined) reads keys directly
   it("reads keys directly when prefix is undefined", () => {
-    const env = createEnv(
-      { HOST: string() },
-      { env: { HOST: "localhost" } }
-    )
+    const env = createEnv({ HOST: string() }, { env: { HOST: "localhost" } })
 
     expect(env.HOST).toBe("localhost")
   })
@@ -116,7 +114,10 @@ describe("createEnv — prefix option", () => {
   it("prefix does not apply to NODE_ENV lookup", () => {
     const env = createEnv(
       { SECRET: string({ devDefault: "dev-secret" }) },
-      { env: { NODE_ENV: "development", APP_SECRET: "prod-secret" }, prefix: "APP_" }
+      {
+        env: { NODE_ENV: "development", APP_SECRET: "prod-secret" },
+        prefix: "APP_"
+      }
     )
 
     // APP_SECRET is found via prefix → env value wins; devDefault is never considered

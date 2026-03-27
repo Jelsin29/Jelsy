@@ -24,9 +24,7 @@ export const boolean = (
     (value) => {
       const result = BOOLEAN_MAP.get(value.toLowerCase())
       if (result === undefined) {
-        throw new Error(
-          `Must be one of: ${ACCEPTED_VALUES}`
-        )
+        throw new Error(`Must be one of: ${ACCEPTED_VALUES}`)
       }
       return result
     },

@@ -6,14 +6,12 @@ describe("createEnv — emptyStringAsUndefined", () => {
   // SPEC-22: default true -> empty string treated as missing -> throws JelsyError
   it("treats empty string as missing by default (true) and throws", () => {
     try {
-      createEnv(
-        { HOST: string() },
-        { env: { HOST: "" } }
-      )
+      createEnv({ HOST: string() }, { env: { HOST: "" } })
       expect.unreachable("should have thrown")
     } catch (err) {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["HOST"]!.kind).toBe("missing")
     }
   })
@@ -30,6 +28,7 @@ describe("createEnv — emptyStringAsUndefined", () => {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
       // The error is "invalid" (not "missing") because the empty string IS passed through
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["HOST"]!.kind).toBe("invalid")
     }
   })
@@ -65,6 +64,7 @@ describe("createEnv — emptyStringAsUndefined", () => {
     } catch (err) {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["HOST"]!.kind).toBe("missing")
     }
   })
@@ -83,7 +83,10 @@ describe("createEnv — emptyStringAsUndefined", () => {
   it("uses devDefault when empty string is treated as undefined in non-production", () => {
     const env = createEnv(
       { SECRET: string({ devDefault: "dev-secret" }) },
-      { env: { NODE_ENV: "development", SECRET: "" }, emptyStringAsUndefined: true }
+      {
+        env: { NODE_ENV: "development", SECRET: "" },
+        emptyStringAsUndefined: true
+      }
     )
 
     expect(env.SECRET).toBe("dev-secret")
@@ -100,6 +103,7 @@ describe("createEnv — emptyStringAsUndefined", () => {
     } catch (err) {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["PORT"]!.kind).toBe("missing")
     }
   })

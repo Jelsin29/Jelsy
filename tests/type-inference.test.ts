@@ -5,7 +5,7 @@ import type {
   Validator,
   ValidatorMeta,
   ValidatorOptions,
-  InferEnv,
+  InferEnv
 } from "../src/types.js"
 import type { StringValidatorOptions } from "../src/validators/string.js"
 import type { NumberValidatorOptions } from "../src/validators/number.js"
@@ -20,9 +20,9 @@ import { boolean } from "../src/validators/boolean.js"
 import { url } from "../src/validators/url.js"
 import { email } from "../src/validators/email.js"
 import { json } from "../src/validators/json.js"
-import { enums } from "../src/validators/enums.js"
+import type { enums } from "../src/validators/enums.js"
 import { regex } from "../src/validators/regex.js"
-import { custom } from "../src/validators/custom.js"
+import type { custom } from "../src/validators/custom.js"
 
 // ---------------------------------------------------------------------------
 // 1. string()
@@ -64,9 +64,9 @@ describe("number() types", () => {
   })
 
   it("accepts NumberValidatorOptions | undefined as parameter", () => {
-    expectTypeOf(number).parameter(0).toEqualTypeOf<
-      NumberValidatorOptions | undefined
-    >()
+    expectTypeOf(number)
+      .parameter(0)
+      .toEqualTypeOf<NumberValidatorOptions | undefined>()
   })
 
   it("NumberValidatorOptions.min is number | undefined", () => {
@@ -97,9 +97,9 @@ describe("port() types", () => {
   })
 
   it("accepts ValidatorOptions<number> as parameter", () => {
-    expectTypeOf(port).parameter(0).toEqualTypeOf<
-      ValidatorOptions<number> | undefined
-    >()
+    expectTypeOf(port)
+      .parameter(0)
+      .toEqualTypeOf<ValidatorOptions<number> | undefined>()
   })
 })
 
@@ -112,9 +112,9 @@ describe("boolean() types", () => {
   })
 
   it("accepts ValidatorOptions<boolean> as parameter", () => {
-    expectTypeOf(boolean).parameter(0).toEqualTypeOf<
-      ValidatorOptions<boolean> | undefined
-    >()
+    expectTypeOf(boolean)
+      .parameter(0)
+      .toEqualTypeOf<ValidatorOptions<boolean> | undefined>()
   })
 })
 
@@ -127,13 +127,13 @@ describe("url() types", () => {
   })
 
   it("accepts UrlValidatorOptions as parameter", () => {
-    expectTypeOf(url).parameter(0).toEqualTypeOf<
-      UrlValidatorOptions | undefined
-    >()
+    expectTypeOf(url)
+      .parameter(0)
+      .toEqualTypeOf<UrlValidatorOptions | undefined>()
   })
 
   it("UrlValidatorOptions extends ValidatorOptions<string>", () => {
-    expectTypeOf<UrlValidatorOptions>().toMatchTypeOf<ValidatorOptions<string>>()
+    expectTypeOf<UrlValidatorOptions>().toExtend<ValidatorOptions<string>>()
   })
 
   it("UrlValidatorOptions has protocols as optional string[]", () => {
@@ -152,9 +152,9 @@ describe("email() types", () => {
   })
 
   it("accepts ValidatorOptions<string> | undefined as parameter", () => {
-    expectTypeOf(email).parameter(0).toEqualTypeOf<
-      ValidatorOptions<string> | undefined
-    >()
+    expectTypeOf(email)
+      .parameter(0)
+      .toEqualTypeOf<ValidatorOptions<string> | undefined>()
   })
 })
 
@@ -196,15 +196,13 @@ describe("enums() types", () => {
   })
 
   it("EnumsValidatorOptions extends ValidatorOptions", () => {
-    expectTypeOf<EnumsValidatorOptions<"x">>().toMatchTypeOf<
-      ValidatorOptions<"x">
-    >()
+    expectTypeOf<EnumsValidatorOptions<"x">>().toExtend<ValidatorOptions<"x">>()
   })
 
   it("parameter requires EnumsValidatorOptions with correct type", () => {
-    expectTypeOf<typeof enums<"dev" | "prod">>().parameter(0).toEqualTypeOf<
-      EnumsValidatorOptions<"dev" | "prod">
-    >()
+    expectTypeOf<typeof enums<"dev" | "prod">>()
+      .parameter(0)
+      .toEqualTypeOf<EnumsValidatorOptions<"dev" | "prod">>()
   })
 })
 
@@ -221,9 +219,7 @@ describe("regex() types", () => {
   })
 
   it("RegexValidatorOptions extends ValidatorOptions<string>", () => {
-    expectTypeOf<RegexValidatorOptions>().toMatchTypeOf<
-      ValidatorOptions<string>
-    >()
+    expectTypeOf<RegexValidatorOptions>().toExtend<ValidatorOptions<string>>()
   })
 })
 
@@ -394,6 +390,7 @@ interface DefaultedValidator<T> extends Validator<T> {
 
 describe("InferEnv<T>", () => {
   it("makes keys required when _meta has optional: false and default: undefined", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     type Schema = {
       HOST: RequiredValidator<string>
       PORT: RequiredValidator<number>
@@ -405,6 +402,7 @@ describe("InferEnv<T>", () => {
   })
 
   it("makes keys optional when _meta has optional: true", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     type Schema = {
       DEBUG: OptionalValidator<boolean>
     }
@@ -414,6 +412,7 @@ describe("InferEnv<T>", () => {
   })
 
   it("makes keys optional when _meta has a concrete default", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     type Schema = {
       PORT: DefaultedValidator<number>
     }
@@ -423,6 +422,7 @@ describe("InferEnv<T>", () => {
   })
 
   it("mixes required and optional keys correctly", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     type Schema = {
       HOST: RequiredValidator<string>
       PORT: DefaultedValidator<number>
@@ -438,6 +438,7 @@ describe("InferEnv<T>", () => {
   it("treats generic Validator<T> keys as optional (boolean is not literal false)", () => {
     // With generic Validator<T>, _meta.optional is `boolean` — not `true`,
     // so IsRequired returns false, making all keys optional.
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     type Schema = {
       NAME: Validator<string>
       COUNT: Validator<number>

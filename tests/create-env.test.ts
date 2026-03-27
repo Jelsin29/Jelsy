@@ -1,12 +1,6 @@
 import { describe, it, expect, vi } from "vitest"
 import { createEnv } from "../src/index.js"
-import {
-  string,
-  number,
-  port,
-  boolean,
-  url
-} from "../src/index.js"
+import { string, port, boolean, url } from "../src/index.js"
 import { JelsyError } from "../src/errors.js"
 import type { ValidationReport } from "../src/types.js"
 
@@ -105,6 +99,7 @@ describe("createEnv", () => {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
       expect(jelsyErr.errors["REQUIRED_VAR"]).toBeDefined()
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["REQUIRED_VAR"]!.kind).toBe("missing")
     }
   })
@@ -125,8 +120,11 @@ describe("createEnv", () => {
       expect(err).toBeInstanceOf(JelsyError)
       const jelsyErr = err as JelsyError
       expect(Object.keys(jelsyErr.errors)).toHaveLength(3)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["MISSING_VAR"]!.kind).toBe("missing")
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["BAD_PORT"]!.kind).toBe("invalid")
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(jelsyErr.errors["ALSO_MISSING"]!.kind).toBe("missing")
     }
   })
@@ -169,7 +167,9 @@ describe("createEnv", () => {
       { env: { HOST: "localhost" } }
     )
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const json = JSON.parse(JSON.stringify(env))
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     expect(json.HOST).toBe("localhost")
   })
 
@@ -203,6 +203,7 @@ describe("createEnv", () => {
     }
 
     expect(reporter).toHaveBeenCalledOnce()
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-non-null-assertion
     const report: ValidationReport = reporter.mock.calls[0]![0]
     expect(report.errors).toBeDefined()
     expect(report.env).toBeDefined()
@@ -215,7 +216,10 @@ describe("createEnv", () => {
     try {
       createEnv(
         {
-          API_URL: url({ desc: "Backend API", example: "https://api.example.com" })
+          API_URL: url({
+            desc: "Backend API",
+            example: "https://api.example.com"
+          })
         },
         { env: { API_URL: "not-a-url" }, reporter }
       )
@@ -224,7 +228,9 @@ describe("createEnv", () => {
       // expected
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-non-null-assertion
     const report: ValidationReport = reporter.mock.calls[0]![0]
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const error = report.errors["API_URL"]!
     expect(error.desc).toBe("Backend API")
     expect(error.example).toBe("https://api.example.com")
@@ -237,10 +243,7 @@ describe("createEnv", () => {
     const reporter = vi.fn() // does nothing, returns void
 
     expect(() =>
-      createEnv(
-        { MISSING: string() },
-        { env: {}, reporter }
-      )
+      createEnv({ MISSING: string() }, { env: {}, reporter })
     ).toThrow(JelsyError)
   })
 
@@ -252,10 +255,7 @@ describe("createEnv", () => {
     })
 
     expect(() =>
-      createEnv(
-        { MISSING: string() },
-        { env: {}, reporter }
-      )
+      createEnv({ MISSING: string() }, { env: {}, reporter })
     ).toThrow(customError)
   })
 
@@ -269,10 +269,7 @@ describe("createEnv", () => {
 
   // Spread excludes explain
   it("spread operator excludes explain from result", () => {
-    const env = createEnv(
-      { HOST: string() },
-      { env: { HOST: "localhost" } }
-    )
+    const env = createEnv({ HOST: string() }, { env: { HOST: "localhost" } })
 
     const spread = { ...env }
     expect(spread).toEqual({ HOST: "localhost" })

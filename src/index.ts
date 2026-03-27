@@ -1,6 +1,6 @@
 // Public API
 export { createEnv } from "./create-env.js"
-export { defaultReporter } from "./reporter.js"
+export { defaultReporter, formatReportTable } from "./reporter.js"
 export {
   string,
   number,

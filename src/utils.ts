@@ -9,6 +9,6 @@ export const truncateValue = (value: string): string => {
 
 export const isProduction = (): boolean => {
   return (
-    typeof process !== "undefined" && process.env?.["NODE_ENV"] === "production"
+    typeof process !== "undefined" && process.env["NODE_ENV"] === "production"
   )
 }
