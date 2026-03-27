@@ -115,7 +115,7 @@ This happens BEFORE any feature code is written. We are not guessing about perfo
 - [x] Final benchmark run -- generate comparison report vs envsafe
 - [x] Write README.md (write it like the package has 2K stars)
 - [x] Set up GitHub Actions CI (Node 20, 22; test + lint + benchmarks)
-- [ ] Configure `np` or `changeset` for publishing
+- [x] Configure `np` or `changeset` for publishing
 - [x] Add CHANGELOG.md
 - [ ] Publish v0.1.0 to npm
 - [ ] Post on Twitter/X, Reddit r/node, r/typescript
