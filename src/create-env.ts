@@ -57,9 +57,11 @@ export const createEnv = <TSchema extends EnvSchema>(
       result[key] = parsed
       const meta = validator._meta
       const source: "env" | "default" | "devDefault" =
-        raw !== undefined ? "env"
-        : meta.devDefault !== undefined && nodeEnv !== "production" ? "devDefault"
-        : "default"
+        raw !== undefined
+          ? "env"
+          : meta.devDefault !== undefined && nodeEnv !== "production"
+            ? "devDefault"
+            : "default"
       provenance.push({
         key,
         value: parsed,

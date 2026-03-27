@@ -14,7 +14,6 @@ export const url = (options?: UrlValidatorOptions): Validator<string> => {
     const bad = options.protocols.filter((p) => !p.endsWith(":"))
     if (bad.length > 0) {
       throw new Error(`Protocols must end with ":"`)
-
     }
   }
 

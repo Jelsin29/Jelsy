@@ -56,7 +56,12 @@ export const makeValidator = <T>(
         return undefined as T
       }
       // eslint-disable-next-line @typescript-eslint/only-throw-error
-      throw { key, kind: "missing" as const, message: "Required \u2014 missing and no default", ...de }
+      throw {
+        key,
+        kind: "missing" as const,
+        message: "Required \u2014 missing and no default",
+        ...de
+      }
     }
 
     let parsed: T
@@ -64,7 +69,13 @@ export const makeValidator = <T>(
       parsed = parseFn(raw)
     } catch (err) {
       // eslint-disable-next-line @typescript-eslint/only-throw-error
-      throw { key, kind: "invalid" as const, message: errMsg(err), received: raw, ...de }
+      throw {
+        key,
+        kind: "invalid" as const,
+        message: errMsg(err),
+        received: raw,
+        ...de
+      }
     }
 
     return applyTransform(key, parsed, raw)

@@ -17,7 +17,8 @@ const cell = (s: string, w: number): string => pad(trunc(s, w), w)
 const formatTable = (report: ValidationReport): string => {
   const entries = Object.values(report.errors)
   const tw =
-    typeof process !== "undefined" && (process.stdout.columns as number | undefined)
+    typeof process !== "undefined" &&
+    (process.stdout.columns as number | undefined)
       ? process.stdout.columns
       : 80
   const sep = "=".repeat(Math.min(tw, 72))
@@ -32,7 +33,10 @@ const formatTable = (report: ValidationReport): string => {
   const mins = [8, 5, 8, 11]
   const headers = ["Variable", "Error", "Received", "Description"]
   const ws = headers.map((h, i) =>
-    clamp(mins[i] ?? 0, Math.max(h.length, ...rows.map((r) => (r[i] ?? "").length)))
+    clamp(
+      mins[i] ?? 0,
+      Math.max(h.length, ...rows.map((r) => (r[i] ?? "").length))
+    )
   )
 
   const J = (cs: string[]): string => cs.join("   ")
@@ -51,10 +55,17 @@ const formatTable = (report: ValidationReport): string => {
   if (invalid > 0) parts.push(`${String(invalid)} invalid`)
 
   return [
-    sep, "  jelsy: Invalid Environment", sep, "",
-    " " + hdr, " " + div,
+    sep,
+    "  jelsy: Invalid Environment",
+    sep,
+    "",
+    " " + hdr,
+    " " + div,
     ...data.map((l) => " " + l),
-    "", sep, `  ${parts.join(", ")}. Exiting.`, sep
+    "",
+    sep,
+    `  ${parts.join(", ")}. Exiting.`,
+    sep
   ].join("\n")
 }
 
