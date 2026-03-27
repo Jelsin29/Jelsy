@@ -4,11 +4,8 @@ import { truncateValue } from "./utils.js"
 
 // -- Table formatting helpers ------------------------------------------------
 
-const MAX_COL_WIDTH = 30
-
 const getTerminalWidth = (): number => {
-  // process.stdout.columns is undefined in non-TTY environments (CI, piped output)
-  if (typeof process !== "undefined" && (process.stdout.columns as number | undefined)) {
+  if (typeof process !== "undefined" && process.stdout.columns > 0) {
     return process.stdout.columns
   }
   return 80
@@ -16,12 +13,6 @@ const getTerminalWidth = (): number => {
 
 const padRight = (str: string, len: number): string =>
   str.length >= len ? str : str + " ".repeat(len - str.length)
-
-const clampWidth = (min: number, content: number): number =>
-  Math.min(MAX_COL_WIDTH, Math.max(min, content))
-
-const truncateCol = (str: string, max: number): string =>
-  str.length <= max ? str : str.slice(0, max - 1) + "\u2026"
 
 const buildErrorMessage = (error: ValidationError): string => {
   if (error.kind === "missing") return "Missing required"
@@ -48,12 +39,12 @@ const formatTable = (report: ValidationReport): string => {
     description: error.desc ?? ""
   }))
 
-  // Compute column widths (capped at MAX_COL_WIDTH)
+  // Compute column widths
   const colWidths = {
-    variable: clampWidth(8, Math.max(...rows.map((r) => r.variable.length))),
-    error: clampWidth(5, Math.max(...rows.map((r) => r.error.length))),
-    received: clampWidth(8, Math.max(...rows.map((r) => r.received.length))),
-    description: clampWidth(11, Math.max(...rows.map((r) => r.description.length)))
+    variable: Math.max(8, ...rows.map((r) => r.variable.length)),
+    error: Math.max(5, ...rows.map((r) => r.error.length)),
+    received: Math.max(8, ...rows.map((r) => r.received.length)),
+    description: Math.max(11, ...rows.map((r) => r.description.length))
   }
 
   const headerLine = [
@@ -72,10 +63,10 @@ const formatTable = (report: ValidationReport): string => {
 
   const dataLines = rows.map((row) =>
     [
-      padRight(truncateCol(row.variable, colWidths.variable), colWidths.variable),
-      padRight(truncateCol(row.error, colWidths.error), colWidths.error),
-      padRight(truncateCol(row.received, colWidths.received), colWidths.received),
-      padRight(truncateCol(row.description, colWidths.description), colWidths.description)
+      padRight(row.variable, colWidths.variable),
+      padRight(row.error, colWidths.error),
+      padRight(row.received, colWidths.received),
+      padRight(row.description, colWidths.description)
     ].join("   ")
   )
 
