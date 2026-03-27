@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest"
 import { formatReportTable, defaultReporter } from "../src/index.js"
-import { JelsyError } from "../src/errors.js"
 import type { ValidationReport } from "../src/types.js"
 
 // ---------------------------------------------------------------------------
